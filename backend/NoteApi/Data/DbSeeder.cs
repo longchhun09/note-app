@@ -14,19 +14,17 @@ namespace NoteApi.Data
             using (var hmac = new HMACSHA512())
             {
                 passwordSalt = hmac.Key;
-                passwordHash = hmac.ComputeHash(System.Text.Encoding.UTF8.GetBytes(password));
+                passwordHash = hmac.ComputeHash(System.Text.Encoding.UTF8.GetBytes(password ?? string.Empty));
             }
         }
 
         public static void SeedData(NoteDbContext context)
         {
-            // Only seed if both users and notes are empty
             if (context.Users.Any() && context.Notes.Any())
             {
                 return; 
             }
-            // Seed a default admin user if no users exist
-            User adminUser = null;
+            User? adminUser = null;
             if (!context.Users.Any())
             {
                 CreatePasswordHash("Admin123!", out byte[] passwordHash, out byte[] passwordSalt);
@@ -35,8 +33,8 @@ namespace NoteApi.Data
                 {
                     Username = "admin",
                     Email = "admin@example.com",
-                    PasswordHash = passwordHash,
-                    PasswordSalt = passwordSalt,
+                    PasswordHash = passwordHash ?? Array.Empty<byte>(),
+                    PasswordSalt = passwordSalt ?? Array.Empty<byte>(),
                     CreatedAt = DateTime.UtcNow,
                     RefreshToken = string.Empty,
                     RefreshTokenExpiry = DateTime.UtcNow.AddDays(7),

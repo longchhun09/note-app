@@ -8,14 +8,9 @@ namespace NoteApi.Models
         IDbConnection CreateConnection();
     }
 
-    public class DapperDbContext : IDapperDbContext
+    public class DapperDbContext(IConfiguration configuration) : IDapperDbContext
     {
-        private readonly string _connectionString;
-
-        public DapperDbContext(IConfiguration configuration)
-        {
-            _connectionString = configuration.GetConnectionString("DefaultConnection");
-        }
+        private readonly string _connectionString = configuration.GetConnectionString("DefaultConnection");
 
         public IDbConnection CreateConnection() => new SqlConnection(_connectionString);
     }
