@@ -3,7 +3,7 @@ import axios from 'axios';
 import type { Note } from '@/types/Note';
 
 // TODO: refactor static api 
-const API_URL = 'http://localhost:5000/api/notes';
+const API_URL = 'http://localhost:5289/api/notes';
 
 export const useNoteStore = defineStore('note', {
   state: () => ({
