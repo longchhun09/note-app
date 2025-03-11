@@ -19,7 +19,8 @@ namespace NoteApi.Repositories
             using var connection = _dbContext.CreateConnection();
             const string sql = @"
                 INSERT INTO Notes (UserId, Title, Content, CreatedAt, UpdatedAt) 
-                VALUES (@UserId, @Title, @Content, @CreatedAt, @UpdatedAt);";
+                VALUES (@UserId, @Title, @Content, @CreatedAt, @UpdatedAt);
+                SELECT CAST(SCOPE_IDENTITY() as int);";
             return await connection.QuerySingleAsync<int>(sql, note);
         }
 
