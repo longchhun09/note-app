@@ -7,7 +7,9 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using NoteApi.Data;
+using NoteApi.DTOs.Notes;
 using NoteApi.Models;
+using NoteApi.Services.Interfaces;
 
 namespace NoteApi.Controllers
 {
@@ -18,19 +20,24 @@ namespace NoteApi.Controllers
         private readonly NoteDbContext _context;
         private readonly ILogger<NotesController> _logger;
 
-        public NotesController(NoteDbContext context, ILogger<NotesController> logger)
+        private readonly INotesService _notesService;
+
+        public NotesController(NoteDbContext context, ILogger<NotesController> logger, INotesService notesService)
         {
             _context = context;
             _logger = logger;
+            _notesService = notesService;
         }
 
-        // GET: api/Notes
+        // GET: api/notes
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Note>>> GetNotes()
+        public async Task<ActionResult<IEnumerable<NoteDTO>>> GetNotes()
         {
             try
             {
-                return await _context.Notes.ToListAsync();
+                var userId = 4;
+                var notes = await _notesService.GetAllNotesAsync(userId);
+                return Ok(notes);
             }
             catch (Exception ex)
             {
@@ -39,7 +46,7 @@ namespace NoteApi.Controllers
             }
         }
 
-        // GET: api/Notes/5
+        // GET: api/notes/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Note>> GetNote(int id)
         {

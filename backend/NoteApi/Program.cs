@@ -1,12 +1,18 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using NoteApi.Data;
+using NoteApi.Models;
+using NoteApi.Repositories;
+using NoteApi.Services;
+using NoteApi.Repositories.Interfaces;
+using NoteApi.Services.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 
 builder.Services.AddEndpointsApiExplorer();
+
 builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v1", new OpenApiInfo 
@@ -20,6 +26,9 @@ builder.Services.AddSwaggerGen(c =>
 builder.Services.AddDbContext<NoteDbContext>(options =>
     options.UseSqlServer(
         builder.Configuration.GetConnectionString("DefaultConnection")));
+builder.Services.AddScoped<IDapperDbContext, DapperDbContext>();
+builder.Services.AddScoped<INotesRepository, NotesRepository>();
+builder.Services.AddScoped<INotesService, NotesService>();
 
 builder.Services.AddCors(options =>
 {

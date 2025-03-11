@@ -24,9 +24,14 @@ namespace NoteApi.Repositories
             throw new NotImplementedException();
         }
 
-        public Task<IEnumerable<Note>> GetAllByUserIdAsync(int userId)
+        public async Task<IEnumerable<Note>> GetAllByUserIdAsync(int userId)
         {
-            throw new NotImplementedException();
+            using var connection = _dbContext.CreateConnection();
+            const string sql = @"
+                SELECT Id, UserId, Title, Content, CreatedAt, UpdatedAt 
+                FROM Notes 
+                WHERE UserId = @UserId";
+            return await connection.QueryAsync<Note>(sql, new { UserId = userId });        
         }
 
         public Task<Note> GetByIdAsync(int id, int userId)
