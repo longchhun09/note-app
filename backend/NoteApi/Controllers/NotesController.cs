@@ -52,14 +52,15 @@ namespace NoteApi.Controllers
         {
             try
             {
-                var note = await _context.Notes.FindAsync(id);
+                var userId = 4;
+                var note = await _notesService.GetNoteByIdAsync(id, userId);
 
                 if (note == null)
                 {
                     return NotFound($"Note with ID {id} not found");
                 }
 
-                return note;
+                return Ok(note);
             }
             catch (Exception ex)
             {
@@ -68,9 +69,9 @@ namespace NoteApi.Controllers
             }
         }
 
-        // POST: api/Notes
+        // POST: api/notes
         [HttpPost]
-        public async Task<ActionResult<Note>> CreateNote(Note note)
+        public async Task<ActionResult<NoteDTO>> CreateNote(CreateNoteDTO noteDTO)
         {
             try
             {
@@ -79,12 +80,8 @@ namespace NoteApi.Controllers
                     return BadRequest(ModelState);
                 }
 
-                note.CreatedAt = DateTime.UtcNow;
-                note.UpdatedAt = DateTime.UtcNow;
-
-                _context.Notes.Add(note);
-                await _context.SaveChangesAsync();
-
+                var userId = 4;
+                var note = await _notesService.CreateNoteAsync(noteDTO, userId);
                 return CreatedAtAction(nameof(GetNote), new { id = note.Id }, note);
             }
             catch (Exception ex)

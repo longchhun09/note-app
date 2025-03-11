@@ -14,9 +14,13 @@ namespace NoteApi.Repositories
             _dbContext = dbContext;
         }
 
-        public Task<int> CreateAsync(Note note)
+        public async Task<int> CreateAsync(Note note)
         {
-            throw new NotImplementedException();
+            using var connection = _dbContext.CreateConnection();
+            const string sql = @"
+                INSERT INTO Notes (UserId, Title, Content, CreatedAt, UpdatedAt) 
+                VALUES (@UserId, @Title, @Content, @CreatedAt, @UpdatedAt);";
+            return await connection.QuerySingleAsync<int>(sql, note);
         }
 
         public Task<bool> DeleteAsync(int id, int userId)
