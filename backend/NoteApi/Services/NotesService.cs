@@ -36,9 +36,9 @@ namespace NoteApi.Services
             };
         }
 
-        public Task<bool> DeleteNoteAsync(int id, int userId)
+        public async Task<bool> DeleteNoteAsync(int id, int userId)
         {
-            throw new NotImplementedException();
+            return await _notesRepository.DeleteAsync(id, userId);
         }
 
         public async Task<IEnumerable<NoteDTO>> GetAllNotesAsync(int userId)
@@ -54,14 +54,34 @@ namespace NoteApi.Services
             });
         }
 
-        public Task<NoteDTO> GetNoteByIdAsync(int id, int userId)
+        public async Task<NoteDTO> GetNoteByIdAsync(int id, int userId)
         {
-            throw new NotImplementedException();
+            var note = await _notesRepository.GetByIdAsync(id, userId);
+            if (note == null)
+                throw new KeyNotFoundException("Note not found");
+
+            return new NoteDTO
+            {
+                Id = note.Id,
+                Title = note.Title,
+                Content = note.Content,
+                CreatedAt = note.CreatedAt,
+                UpdatedAt = note.UpdatedAt
+            };        
         }
 
-        public Task<bool> UpdateNoteAsync(int id, UpdateNoteDTO noteDto, int userId)
+        public async Task<bool> UpdateNoteAsync(int id, UpdateNoteDTO noteDto, int userId)
         {
-            throw new NotImplementedException();
+            var updateNote = await _notesRepository.GetByIdAsync(id, userId);
+            if (updateNote == null) {
+                throw new KeyNotFoundException("Note not found");
+            }
+            
+            updateNote.Title = noteDto.Title;
+            updateNote.Content = noteDto.Content;
+            updateNote.UpdatedAt = DateTime.UtcNow;
+
+            return await _notesRepository.UpdateAsync(updateNote);
         }
     }
 }
