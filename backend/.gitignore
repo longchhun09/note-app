@@ -1,0 +1,126 @@
+# Build results and binary files
+[Bb]in/
+[Oo]bj/
+[Ll]og/
+[Ll]ogs/
+x64/
+x86/
+[Ww][Ii][Nn]32/
+[Aa][Rr][Mm]/
+[Aa][Rr][Mm]64/
+bld/
+[Dd]ebug/
+[Dd]ebugPublic/
+[Rr]elease/
+[Rr]eleases/
+*.exe
+*.dll
+*.pdb
+*.cache
+*.ilk
+*.meta
+
+# User-specific files
+*.rsuser
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+*.userprefs
+
+# Visual Studio files
+.vs/
+*.pidb
+*.svclog
+*.scc
+*.vspscc
+*.vssscc
+*_i.c
+*_p.c
+*.ncb
+*.tlb
+*.tlh
+*.bak
+*.nupkg
+*.snupkg
+ipch/
+*.opendb
+*.opensdf
+*.sdf
+*.cachefile
+*.VC.db
+*.VC.VC.opendb
+
+# ReSharper files
+_ReSharper*/
+*.[Rr]e[Ss]harper
+*.DotSettings.user
+_TeamCity*
+*.dotCover
+
+# .NET Core build output
+project.lock.json
+project.fragment.lock.json
+artifacts/
+
+# Dependencies
+packages/
+*.nupkg
+# NuGet v3's project.json files produces more ignorable files
+*.nuget.props
+*.nuget.targets
+
+# Publishing directories
+[Pp]ublish/
+[Pp]ublished/
+*.[Pp]ublish.xml
+*.azurePubxml
+*.pubxml
+*.publishproj
+PublishScripts/
+
+# IDE-specific files
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+*.code-workspace
+.ionide/
+*.sln.iml
+
+# Testing results
+[Tt]est[Rr]esult*/
+[Bb]uild[Ll]og.*
+*.VisualState.xml
+TestResults/
+coverage*.json
+coverage*.xml
+coverage*.info
+*.coverage
+*.coveragexml
+*.testlog
+*.trx
+
+# Local configuration files
+appsettings.*.json
+!appsettings.example.json
+*.local.json
+local.settings.json
+launchSettings.json
+ServiceDependencies/
+secrets.json
+**/Properties/launchSettings.json
+
+# Others
+.fake/
+*.GhostDoc.xml
+*.plg
+.idea/
+node_modules/
+*.tmp
+*.swp
+*~
+.DS_Store
+Thumbs.db
+
