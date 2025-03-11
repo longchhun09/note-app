@@ -1,10 +1,21 @@
 <template>
     <div class="max-w-7xl mx-auto p-5">
-        <h1 class="text-3xl font-bold mb-8 text-gray-800">My Notes</h1>
+        <div class="flex justify-between items-center mb-8">
+            <h1 class="text-3xl font-bold text-gray-800">My Notes</h1>
+            <button 
+                @click.stop="onShowNote" 
+                class="bg-blue-500 hover:bg-blue-600 text-white font-medium px-4 py-2 rounded-md flex items-center justify-center transition-colors shadow-sm hover:shadow-md" 
+                title="New Note"
+            >
+                <span class="mr-2">➕</span>
+                <span>New Note</span>
+            </button>
+        </div>
+        <NewNote v-if="showEditNote" />
         <LoadingState v-if="noteStore.isLoading" />
         <ErrorNoteState v-else-if="noteStore.error" :noteStore  />
         <EmptyState v-else-if="noteStore.notes.length === 0" />
-
+        
         <!-- List -->
         <div v-else class="grid grid-cols-1 sm:grid-cols-2 gap-5 mt-5">
             <div 
@@ -47,16 +58,21 @@ import { useNoteStore } from '@/stores/noteStore';
 import EmptyState from './EmptyState.vue';
 import LoadingState from './LoadingState.vue';
 import ErrorNoteState from './ErrorNoteState.vue';
+import NewNote from './NewNote.vue';
 
 const router = useRouter();
 const noteStore = useNoteStore();
 const showDeleteConfirm = ref(false);
+const showEditNote = ref(false);
 const noteToDelete = ref<number | null>(null);
 
 onMounted(() => {
     fetchNotes();
 });
 
+function onShowNote() {
+    showEditNote.value = !showEditNote.value;
+}
 async function fetchNotes() {
     try {
         await noteStore.fetchNotes();

@@ -8,7 +8,14 @@ import { RouterLink, RouterView } from 'vue-router'
     <div class="lg:flex lg:items-start lg:flex-wrap">
       <nav class="w-full text-xs text-center mt-8 lg:text-left lg:-ml-4 lg:text-base lg:py-4 lg:mt-4">
         <RouterLink 
-          to="/" 
+          to="/notes/new" 
+          class="inline-block px-4 first:border-0 border-l border-gray-300 hover:text-blue-600 transition-colors"
+          :class="{ 'text-blue-700 font-semibold': $route.path === '/' }"
+        >
+          New Note
+        </RouterLink>
+        <RouterLink 
+          to="/notes" 
           class="inline-block px-4 first:border-0 border-l border-gray-300 hover:text-blue-600 transition-colors"
           :class="{ 'text-blue-700 font-semibold': $route.path === '/' }"
         >
