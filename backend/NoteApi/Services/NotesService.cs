@@ -22,6 +22,7 @@ namespace NoteApi.Services
                 Content = noteDto.Content,
                 CreatedAt = DateTime.UtcNow,
                 UpdatedAt = DateTime.UtcNow,
+                UserId = userId,
             };
 
             note.Id = await _notesRepository.CreateAsync(note);
