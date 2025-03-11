@@ -1,8 +1,18 @@
 export interface Note {
-  id: string;
+  id: number;
   title: string;
-  content?: string;
-  createdAt: string;
-  updatedAt: string | null;
+  content: string | null;
+  createdAt: string; // ISO string representation of DateTime
+  updatedAt: string; // ISO string representation of DateTime
 }
 
+export interface CreateNoteRequest {
+  title: string;
+  content?: string | null;
+}
+
+export interface UpdateNoteRequest {
+  id: number;
+  title: string;
+  content?: string | null;
+}
