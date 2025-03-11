@@ -10,7 +10,10 @@ namespace NoteApi.Models
 
     public class DapperDbContext(IConfiguration configuration) : IDapperDbContext
     {
-        private readonly string _connectionString = configuration.GetConnectionString("DefaultConnection");
+        private readonly string _connectionString = configuration.GetConnectionString("DefaultConnection") 
+            ?? throw new InvalidOperationException(
+                "Connection string 'DefaultConnection' not found in configuration. " +
+                "Please ensure your connection string is properly set in the application configuration.");
 
         public IDbConnection CreateConnection() => new SqlConnection(_connectionString);
     }
