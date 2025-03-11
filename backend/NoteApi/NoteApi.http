@@ -1,0 +1,6 @@
+@NoteApi_HostAddress = http://localhost:5289
+
+GET {{NoteApi_HostAddress}}/api/Notes
+Accept: application/json
+
+###
