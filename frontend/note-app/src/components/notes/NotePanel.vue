@@ -161,7 +161,6 @@ const isNew = computed(() => props.isNew);
 // Methods
 function initializeNote() {
   if (props.isNew) {
-    // Create mode - empty note
     note.value = null;
     editableNote.value = {
       title: '',
@@ -169,17 +168,16 @@ function initializeNote() {
     };
     isEditing.value = true;
   } else if (props.id) {
-    // Edit or view existing note
     loading.value = true;
     error.value = '';
     
     try {
-      const foundNote = noteStore.getNoteById(props.id);
+      const foundNote = noteStore.getNoteById(props.id);      
       if (foundNote) {
         note.value = foundNote;
         editableNote.value = {
           title: foundNote.title,
-          content: foundNote.content
+          content: foundNote.content || ''
         };
         isEditing.value = props.editMode;
       } else {
@@ -196,14 +194,12 @@ function initializeNote() {
 
 function toggleEditMode() {
   if (!isEditing.value) {
-    // Switching to edit mode
     editableNote.value = {
       title: note.value?.title || '',
       content: note.value?.content || ''
     };
     isEditing.value = true;
     
-    // Update URL with edit query parameter
     router.replace({ 
       path: route.path, 
       query: { ...route.query, edit: 'true' } 
@@ -213,10 +209,8 @@ function toggleEditMode() {
 
 function cancelEdit() {
   if (props.isNew) {
-    // If creating a new note, go back to notes list
     router.push('/notes');
   } else {
-    // Reset form and exit edit mode
     editableNote.value = {
       title: note.value?.title || '',
       content: note.value?.content || ''
@@ -225,7 +219,6 @@ function cancelEdit() {
     titleError.value = '';
     contentError.value = '';
     
-    // Remove edit query parameter
     router.replace({ 
       path: route.path, 
       query: {} 
@@ -236,17 +229,14 @@ function cancelEdit() {
 function validateForm() {
   let isValid = true;
   
-  // Reset errors
   titleError.value = '';
   contentError.value = '';
   
-  // Validate title
   if (!editableNote.value.title.trim()) {
     titleError.value = 'Title is required';
     isValid = false;
   }
   
-  // Validate content
   if (!editableNote.value.content.trim()) {
     contentError.value = 'Content is required';
     isValid = false;
@@ -263,29 +253,28 @@ async function saveNote() {
   
   try {
     if (props.isNew) {
-      // Create new note
       await noteStore.createNote({
         title: editableNote.value.title,
         content: editableNote.value.content
       });
       router.push('/notes');
     } else if (note.value) {
-      // Update existing note
+      
       await noteStore.updateNote({
         id: note.value.id,
         title: editableNote.value.title,
         content: editableNote.value.content
       });
       
-      // Reload note data and exit edit mode
       const updatedNote = noteStore.getNoteById(note.value.id);
+      console.log('updatedNote', updatedNote);
+      
       if (updatedNote) {
         note.value = updatedNote;
       }
       
       isEditing.value = false;
-      
-      // Remove edit query parameter
+
       router.replace({ 
         path: route.path, 
         query: {} 
@@ -316,7 +305,6 @@ async function deleteNote() {
 }
 
 
-// Watchers
 watch(() => props.id, () => {
   initializeNote();
 });
@@ -331,7 +319,6 @@ watch(() => props.editMode, (newValue) => {
   }
 });
 
-// Lifecycle hooks
 onMounted(() => {
   initializeNote();
 });
