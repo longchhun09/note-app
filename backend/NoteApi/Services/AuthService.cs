@@ -85,7 +85,7 @@ namespace NoteApi.Services
 
         private string GenerateJwtToken(User user)
         {
-            string jwtKey = _configuration["Jwt:Key"] ?? throw new InvalidOperationException("JWT Key is not configured");
+            string jwtKey = _configuration["AppSettings:Secret"] ?? throw new InvalidOperationException("AppSettings Secret is not configured");
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey));
             var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
@@ -96,8 +96,8 @@ namespace NoteApi.Services
         };
 
             var token = new JwtSecurityToken(
-                issuer: _configuration["Jwt:Issuer"],
-                audience: _configuration["Jwt:Audience"],
+                issuer: _configuration["AppSettings:Issuer"],
+                audience: _configuration["AppSettings:Audience"],
                 claims: claims,
                 expires: DateTime.UtcNow.AddDays(7),
                 signingCredentials: credentials
