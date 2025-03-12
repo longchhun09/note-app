@@ -50,13 +50,7 @@
       </div>
       
       <div class="mt-8">
-        <button
-          @click="createNewNote"
-          class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-        >
-          <Plus class="-ml-1 mr-2 h-5 w-5" />
-          Create New Note
-        </button>
+        <Button text="Create New Note" @click="navigateToNewNote" :icon="Plus" />
       </div>
     </div>
   </div>
@@ -65,11 +59,10 @@
 <script setup lang="ts">
 import { useRouter } from 'vue-router';
 import { PenSquare, Plus, PenLine, Trash2 } from 'lucide-vue-next';
+import Button from '@/components/common/Button.vue';
+import { useNoteNavigation } from '@/utils/noteNavigation';
 
 const router = useRouter();
-
-function createNewNote() {
-  router.push('/notes/new');
-}
+const { navigateToNewNote } = useNoteNavigation(router);
 </script>
 

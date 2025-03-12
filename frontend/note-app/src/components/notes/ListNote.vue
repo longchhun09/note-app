@@ -2,14 +2,7 @@
     <div class="h-full flex flex-col overflow-hidden p-4">
         <div class="flex justify-between items-center mb-4">
             <h1 class="text-xl font-bold text-gray-800">My Notes</h1>
-            <router-link 
-                to="/notes/new" 
-                class="bg-blue-500 hover:bg-blue-600 text-white font-medium px-3 py-1.5 rounded-md flex items-center justify-center transition-colors shadow-sm hover:shadow-md text-sm" 
-                title="New Note"
-            >
-                <Plus class="mr-1 h-4 w-4" />
-                <span>New Note</span>
-            </router-link>
+            <Button text="New Note" @click="navigateToNewNote" :icon="Plus" />
         </div>
         <LoadingState v-if="noteStore.isLoading" />
         <ErrorNoteState v-else-if="noteStore.error" :noteStore  />
@@ -70,11 +63,16 @@ import EmptyState from './EmptyState.vue';
 import LoadingState from './LoadingState.vue';
 import ErrorNoteState from './ErrorNoteState.vue';
 import { formatDate } from '@/utils/dateFormatter.js';
+import Button from '@/components/common/Button.vue';
+import { useNoteNavigation } from '@/utils/noteNavigation';
+
 const noteStore = useNoteStore();
+const { navigateToNewNote } = useNoteNavigation();
 
 onMounted(() => {
     fetchNotes();
 });
+
 async function fetchNotes() {
     try {
         await noteStore.fetchNotes();
