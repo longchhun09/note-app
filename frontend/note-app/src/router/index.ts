@@ -41,7 +41,7 @@ const router = createRouter({
           name: 'new-note',
           component: () => import('@/components/notes/NotePanel.vue'),
           props: { isNew: true }
-        }
+        },
       ]
     },
     {
@@ -51,7 +51,12 @@ const router = createRouter({
       // this generates a separate chunk (About.[hash].js) for this route
       // which is lazy-loaded when the route is visited.
       component: () => import('../views/UserView.vue'),
-    }
+    },
+    {
+      path: '/login',
+      name: 'login',
+      component: () => import('../views/LoginView.vue')
+    },
   ],
 })
 
