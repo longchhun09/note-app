@@ -1,11 +1,5 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using NoteApi.Data;
 using NoteApi.DTOs.Notes;
 using NoteApi.Models;
@@ -15,6 +9,7 @@ namespace NoteApi.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
+    [Authorize]
     public class NotesController : ControllerBase
     {
         private readonly NoteDbContext _context;
