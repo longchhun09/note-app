@@ -136,6 +136,7 @@ import { useRoute, useRouter } from 'vue-router';
 import { useNoteStore } from '@/stores/noteStore';
 import { Edit, Trash, Save, X } from 'lucide-vue-next';
 import type { Note } from '@/types/Note';
+import { formatDate } from '@/utils/dateFormatter';
 
 const props = defineProps({
   id: {
@@ -332,17 +333,6 @@ async function deleteNote() {
   }
 }
 
-function formatDate(dateString?: string): string {
-  if (!dateString) return 'N/A';
-  const date = new Date(dateString);
-  return new Intl.DateTimeFormat('en-US', {
-    year: 'numeric',
-    month: 'short',
-    day: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit'
-  }).format(date);
-}
 
 // Watchers
 watch(() => props.id, () => {

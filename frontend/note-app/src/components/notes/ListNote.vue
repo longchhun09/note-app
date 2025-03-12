@@ -70,7 +70,7 @@ import { Plus, Edit, Trash } from 'lucide-vue-next';
 import EmptyState from './EmptyState.vue';
 import LoadingState from './LoadingState.vue';
 import ErrorNoteState from './ErrorNoteState.vue';
-
+import { formatDate } from '@/utils/dateFormatter.js';
 const route = useRoute();
 const noteStore = useNoteStore();
 const noteToDelete = ref<number | null>(null);
@@ -94,18 +94,6 @@ async function fetchNotes() {
 function getContentPreview(content: string | null): string {
     if (!content) return 'No content';
     return content.length > 100 ? content.substring(0, 100) + '...' : content;
-}
-
-function formatDate(dateString: string): string {
-    if (!dateString) return 'N/A';
-    const date = new Date(dateString);
-    return new Intl.DateTimeFormat('en-US', {
-        year: 'numeric',
-        month: 'short',
-        day: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit'
-    }).format(date);
 }
 
 function confirmDelete(id: number) {

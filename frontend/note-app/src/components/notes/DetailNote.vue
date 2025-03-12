@@ -42,7 +42,6 @@
         </div>
       </div>
   
-      <!-- No note found message -->
       <div v-else class="bg-yellow-100 border border-yellow-400 text-yellow-700 px-4 py-3 rounded relative mb-4" role="alert">
         <strong class="font-bold">Note not found!</strong>
         <span class="block sm:inline"> The requested note could not be found.</span>
@@ -55,7 +54,8 @@
   import { useRoute, useRouter } from 'vue-router';
   import { useNoteStore } from '@/stores/noteStore';
   import { ArrowLeft, Edit, Trash } from 'lucide-vue-next';
-  
+  import { formatDate } from '@/utils/dateFormatter.js';
+
   const route = useRoute();
   const router = useRouter();
   const noteStore = useNoteStore();
@@ -64,7 +64,6 @@
   const loading = ref(true);
   const error = ref(null);
   
-  // Fetch note details when component is mounted
   onMounted(() => {
     try {
       loading.value = true;
@@ -83,15 +82,7 @@
       loading.value = false;
     }
   });
-  
-  // Format date to a more readable format
-  const formatDate = (dateString) => {
-    if (!dateString) return 'N/A';
-    const date = new Date(dateString);
-    return date.toLocaleString();
-  };
-  
-  // Navigation functions
+
   const goBack = () => {
     router.push('/');
   };
