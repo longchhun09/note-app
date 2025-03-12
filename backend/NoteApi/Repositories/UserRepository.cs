@@ -7,6 +7,29 @@ namespace NoteApi.Repositories
     {
         private readonly IDapperDbContext _dbContext;
 
+        private const string CreateUserSql = @"
+            INSERT INTO Users (Username, Email, PasswordHash, PasswordSalt, CreatedAt, IsActive, RefreshToken) 
+            VALUES (@Username, @Email, @PasswordHash, @PasswordSalt, @CreatedAt, @IsActive, @RefreshToken);
+            SELECT CAST(SCOPE_IDENTITY() as int)";
+
+        private const string UpdateUserSql = @"
+            UPDATE Users 
+            SET Username = @Username,
+                PasswordHash = @PasswordHash 
+            WHERE Id = @Id";
+
+        private const string DeleteUserSql = "DELETE FROM Users WHERE Id = @Id";
+
+        private const string GetUserByIdSql = @"
+            SELECT Id, Username, PasswordHash, CreatedAt 
+            FROM Users 
+            WHERE Id = @Id";
+
+        private const string GetUserByUsernameSql = @"
+            SELECT Id, Username, PasswordHash, CreatedAt 
+            FROM Users 
+            WHERE Username = @Username";
+
         public UserRepository(IDapperDbContext dbContext)
         {
             _dbContext = dbContext;
@@ -15,12 +38,7 @@ namespace NoteApi.Repositories
         public async Task<int> CreateAsync(User user)
         {
             using var connection = _dbContext.CreateConnection();
-            const string sql = @"
-                INSERT INTO Users (Username, Email, PasswordHash, PasswordSalt, CreatedAt, IsActive, RefreshToken) 
-                VALUES (@Username, @Email, @PasswordHash, @PasswordSalt, @CreatedAt, @IsActive, @RefreshToken);
-                SELECT CAST(SCOPE_IDENTITY() as int)";
-
-            var newUserId = await connection.ExecuteScalarAsync<int>(sql, new
+            var newUserId = await connection.ExecuteScalarAsync<int>(CreateUserSql, new
             {
                 user.Username,
                 user.Email,
@@ -37,42 +55,27 @@ namespace NoteApi.Repositories
         public async Task<bool> UpdateAsync(User user)
         {
             using var connection = _dbContext.CreateConnection();
-            const string sql = @"
-                UPDATE Users 
-                SET Username = @Username,
-                    PasswordHash = @PasswordHash 
-                WHERE Id = @Id";
-            var updatedRow = await connection.ExecuteAsync(sql, user);
+            var updatedRow = await connection.ExecuteAsync(UpdateUserSql, user);
             return updatedRow > 0;
         }
 
         public async Task<bool> DeleteAsync(int id)
         {
             using var connection = _dbContext.CreateConnection();
-            const string sql = "DELETE FROM Users WHERE Id = @Id";
-            var updatedRow = await connection.ExecuteAsync(sql, new { Id = id });
+            var updatedRow = await connection.ExecuteAsync(DeleteUserSql, new { Id = id });
             return updatedRow > 0;
         }
 
         public async Task<User> GetByIdAsync(int id)
         {
             using var connection = _dbContext.CreateConnection();
-            const string sql = @"
-                SELECT Id, Username, PasswordHash, CreatedAt 
-                FROM Users 
-                WHERE Id = @Id";
-            return await connection.QueryFirstOrDefaultAsync<User>(sql, new { Id = id });
+            return await connection.QueryFirstOrDefaultAsync<User>(GetUserByIdSql, new { Id = id });
         }
 
         public async Task<User> GetByUsernameAsync(string username)
         {
             using var connection = _dbContext.CreateConnection();
-            const string sql = @"
-                SELECT Id, Username, PasswordHash, CreatedAt 
-                FROM Users 
-                WHERE Username = @Username";
-            return await connection.QueryFirstOrDefaultAsync<User>(sql, new { Username = username });
+            return await connection.QueryFirstOrDefaultAsync<User>(GetUserByUsernameSql, new { Username = username });
         }
-
     }
 }
