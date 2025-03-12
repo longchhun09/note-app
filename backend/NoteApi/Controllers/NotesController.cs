@@ -4,6 +4,7 @@ using NoteApi.Data;
 using NoteApi.DTOs.Notes;
 using NoteApi.Models;
 using NoteApi.Services.Interfaces;
+using System.Security.Claims;
 
 namespace NoteApi.Controllers
 {
@@ -24,13 +25,23 @@ namespace NoteApi.Controllers
             _notesService = notesService;
         }
 
+        private int GetUserIdFromClaims()
+        {
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
+            if (userIdClaim == null)
+            {
+                throw new UnauthorizedAccessException("User ID claim not found");
+            }
+            return int.Parse(userIdClaim.Value);
+        }
+
         // GET: api/notes
         [HttpGet]
         public async Task<ActionResult<IEnumerable<NoteDTO>>> GetNotes()
         {
             try
             {
-                var userId = 4;
+                var userId = GetUserIdFromClaims();
                 var notes = await _notesService.GetAllNotesAsync(userId);
                 return Ok(notes);
             }
@@ -47,7 +58,7 @@ namespace NoteApi.Controllers
         {
             try
             {
-                var userId = 4;
+                var userId = GetUserIdFromClaims();
                 var note = await _notesService.GetNoteByIdAsync(id, userId);
 
                 if (note == null)
@@ -75,7 +86,7 @@ namespace NoteApi.Controllers
                     return BadRequest(ModelState);
                 }
 
-                var userId = 4;
+                var userId = GetUserIdFromClaims();
                 var note = await _notesService.CreateNoteAsync(noteDTO, userId);
                 return CreatedAtAction(nameof(GetNote), new { id = note.Id }, note);
             }
@@ -92,7 +103,7 @@ namespace NoteApi.Controllers
         {
             try
             {
-                var userId = 4;
+                var userId = GetUserIdFromClaims();
 
                 if (id != noteDTO.Id)
                 {
@@ -121,10 +132,11 @@ namespace NoteApi.Controllers
 
         // DELETE: api/notes/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteNote(int id, int userId)
+        public async Task<IActionResult> DeleteNote(int id)
         {
             try
             {
+                var userId = GetUserIdFromClaims();
                 var result = await _notesService.DeleteNoteAsync(id, userId);
                 return result ? NoContent() : NotFound();
             }
