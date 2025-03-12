@@ -13,9 +13,9 @@
       <p>{{ initialLoadError }}</p>
       <button 
         @click="goBack" 
-        class="mt-4 px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-800 rounded-md"
+        class="mt-4 px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-800 rounded-md flex items-center"
       >
-        Back to Notes
+        <ArrowLeft class="mr-2" size="18" /> Back to Notes
       </button>
     </div>
 
@@ -80,6 +80,7 @@
 import { ref, reactive, onMounted } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import { useNoteStore } from '@/stores/noteStore';
+import { ArrowLeft } from 'lucide-vue-next';
 
 const router = useRouter();
 const route = useRoute();

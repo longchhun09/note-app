@@ -7,7 +7,7 @@
                 class="bg-blue-500 hover:bg-blue-600 text-white font-medium px-4 py-2 rounded-md flex items-center justify-center transition-colors shadow-sm hover:shadow-md" 
                 title="New Note"
             >
-                <span class="mr-2">➕</span>
+                <Plus class="mr-2 h-5 w-5" />
                 <span>New Note</span>
             </button>
         </div>
@@ -37,14 +37,14 @@
                         class="bg-transparent border-none text-xl cursor-pointer p-1.5 rounded-full flex items-center justify-center transition-colors hover:bg-gray-100" 
                         title="Edit Note"
                     >
-                        ✏️
+                        <Edit class="h-5 w-5 text-gray-600" />
                     </button>
                     <button 
                         @click.stop="confirmDelete(note.id)" 
                         class="bg-transparent border-none text-xl cursor-pointer p-1.5 rounded-full flex items-center justify-center transition-colors hover:bg-red-50" 
                         title="Delete Note"
                     >
-                        🗑️
+                        <Trash class="h-5 w-5 text-red-500" />
                     </button>
                 </div>
             </div>
@@ -56,6 +56,7 @@
 import { onMounted, ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { useNoteStore } from '@/stores/noteStore';
+import { Plus, Edit, Trash } from 'lucide-vue-next';
 import EmptyState from './EmptyState.vue';
 import LoadingState from './LoadingState.vue';
 import ErrorNoteState from './ErrorNoteState.vue';

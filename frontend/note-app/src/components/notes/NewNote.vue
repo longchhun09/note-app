@@ -34,9 +34,9 @@
         <button
           type="button"
           @click="cancelForm"
-          class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+          class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 flex items-center"
         >
-          Cancel
+          <X class="mr-1" size="16" /> Cancel
         </button>
         <button
           type="submit"
@@ -51,7 +51,9 @@
             </svg>
             Saving...
           </span>
-          <span v-else>Save Note</span>
+          <span v-else class="flex items-center">
+            <Save class="mr-1" size="16" /> Save
+          </span>
         </button>
       </div>
     </form>
@@ -62,6 +64,7 @@
 import { ref, reactive } from 'vue';
 import { useRouter } from 'vue-router';
 import { useNoteStore } from '@/stores/noteStore';
+import { Save, X } from 'lucide-vue-next';
 
 const router = useRouter();
 const noteStore = useNoteStore();
