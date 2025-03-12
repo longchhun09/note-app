@@ -5,6 +5,10 @@ const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
+      path: '/',
+      redirect: '/notes'
+    },
+    {
       path: '/notes',
       name: 'notes',
       component: HomeView,
@@ -21,6 +25,18 @@ const router = createRouter({
       path: '/notes/new',
       name: 'new-note',
       component: () => import('@/components/notes/NewNote.vue')
+    },
+    {
+      path: '/note/:id',
+      name: 'note-detail',
+      component: () => import('@/components/notes/DetailNote.vue'),
+      props: true
+    },
+    {
+      path: '/note/edit/:id',
+      name: 'edit-note',
+      component: () => import('@/components/notes/EditNote.vue'),
+      props: true
     }
   ],
 })

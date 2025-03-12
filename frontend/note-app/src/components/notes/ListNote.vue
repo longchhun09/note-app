@@ -11,7 +11,7 @@
                 <span>New Note</span>
             </button>
         </div>
-        <NewNote v-if="showEditNote" />
+        <NewNote v-if="showEditNote" @onCancel="onShowNote" />
         <LoadingState v-if="noteStore.isLoading" />
         <ErrorNoteState v-else-if="noteStore.error" :noteStore  />
         <EmptyState v-else-if="noteStore.notes.length === 0" />
@@ -25,13 +25,14 @@
                 @click="viewNote(note.id)"
             >
                 <h2 class="text-xl font-semibold mb-2.5 text-gray-800 truncate">{{ note.title }}</h2>
+                
                 <p class="text-gray-600 mb-4 text-[0.95rem] leading-6 h-[4.5em] overflow-hidden line-clamp-3">{{ getContentPreview(note.content) }}</p>
                 <div class="flex flex-col text-xs text-gray-400 mt-4">
                     <span class="mb-1">Created: {{ formatDate(note.createdAt) }}</span>
                     <span>Updated: {{ formatDate(note.updatedAt) }}</span>
                 </div>
-                <div class="absolute top-2.5 right-2.5 flex gap-1.5 opacity-0 transition-opacity duration-200 group-hover:opacity-100">
-                    <button 
+                <div class="flex items-center mt-2">
+                    <button
                         @click.stop="editNote(note.id)" 
                         class="bg-transparent border-none text-xl cursor-pointer p-1.5 rounded-full flex items-center justify-center transition-colors hover:bg-gray-100" 
                         title="Edit Note"
@@ -87,6 +88,7 @@ function getContentPreview(content: string | null): string {
 }
 
 function formatDate(dateString: string): string {
+    if (!dateString) return 'N/A';
     const date = new Date(dateString);
     return new Intl.DateTimeFormat('en-US', {
         year: 'numeric',
@@ -102,7 +104,7 @@ function viewNote(id: number) {
 }
 
 function editNote(id: number) {
-    router.push(`/edit/${id}`);
+    router.push(`/note/edit/${id}`);
 }
 
 function confirmDelete(id: number) {
