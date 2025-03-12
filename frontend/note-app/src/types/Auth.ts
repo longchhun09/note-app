@@ -1,7 +1,11 @@
 export interface User {
-  id: number;
   username: string;
   email?: string;
+}
+
+export interface AuthUser {
+  isAuthenticated: boolean;
+  username: string;
 }
 
 export interface AuthState {

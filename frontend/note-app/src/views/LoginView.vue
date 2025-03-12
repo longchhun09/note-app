@@ -123,9 +123,9 @@ const handleLogin = async () => {
     await authStore.login({
       username: credentials.username.trim(),
       password: credentials.password
+    }).then(() => {
+      router.push({ name: 'notes' });
     });
-    
-    router.push({ name: 'notes' });
   } catch (error) {
     console.error('Login error:', error);
     errorMessage.value = authStore.error || 'Failed to login. Please check your credentials and try again.';

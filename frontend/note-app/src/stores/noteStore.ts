@@ -1,9 +1,6 @@
 import { defineStore } from 'pinia';
-import axios, { AxiosError } from 'axios';
 import type { Note, CreateNoteRequest, UpdateNoteRequest } from '@/types/Note';
-
-// TODO: refactor static api 
-const API_URL = 'http://localhost:5289/api/notes';
+import { noteApi } from '../services';
 
 export const useNoteStore = defineStore('noteStore', {
   state: () => ({
@@ -18,11 +15,10 @@ export const useNoteStore = defineStore('noteStore', {
       this.error = null;
       
       try {
-        const response = await axios.get(API_URL);
+        const response = await noteApi.getAllNotes();
         this.notes = response.data;
-      } catch (error) {
-        const axiosError = error as AxiosError;
-        const errorMessage = axiosError.response?.data?.message || axiosError.message || 'Failed to fetch notes';
+      } catch (error: any) {
+        const errorMessage = error.message || 'Failed to fetch notes';
         console.error('Error fetching notes:', errorMessage);
         this.error = errorMessage;
         throw error;
@@ -35,12 +31,11 @@ export const useNoteStore = defineStore('noteStore', {
       this.error = null;
       
       try {
-        const response = await axios.post(API_URL, note);
+        const response = await noteApi.createNote(note);
         this.notes.push(response.data);
         return response.data;
-      } catch (error) {
-        const axiosError = error as AxiosError;
-        const errorMessage = axiosError.response?.data?.message || axiosError.message || 'Failed to create note';
+      } catch (error: any) {
+        const errorMessage = error.message || 'Failed to create note';
         console.error('Error creating note:', errorMessage);
         this.error = errorMessage;
         throw error;
@@ -53,7 +48,7 @@ export const useNoteStore = defineStore('noteStore', {
       this.error = null;
       
       try {
-        await axios.put(`${API_URL}/${note.id}`, note);
+        await noteApi.updateNote(note);
         const index = this.notes.findIndex(n => n.id === note.id);        
         if (index !== -1) {
           const existingNote = this.notes[index];
@@ -69,9 +64,8 @@ export const useNoteStore = defineStore('noteStore', {
           return updatedNote;
         }
         
-      } catch (error) {
-        const axiosError = error as AxiosError;
-        const errorMessage = axiosError.response?.data?.message || axiosError.message || 'Failed to update note';
+      } catch (error: any) {
+        const errorMessage = error.message || 'Failed to update note';
         console.error('Error updating note:', errorMessage);
         this.error = errorMessage;
         throw error;
@@ -84,11 +78,10 @@ export const useNoteStore = defineStore('noteStore', {
       this.error = null;
       
       try {
-        await axios.delete(`${API_URL}/${id}`);
+        await noteApi.deleteNote(id);
         this.notes = this.notes.filter(note => note.id !== id);
-      } catch (error) {
-        const axiosError = error as AxiosError;
-        const errorMessage = axiosError.response?.data?.message || axiosError.message || 'Failed to delete note';
+      } catch (error: any) {
+        const errorMessage = error.message || 'Failed to delete note';
         console.error('Error deleting note:', errorMessage);
         this.error = errorMessage;
         throw error;

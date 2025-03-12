@@ -12,10 +12,10 @@ authStore.checkAuth().then(authenticated => {
 });
 
 function logOut() {
-  authStore.logout();
-  isAuthenticate.value = false;
-  isDropdownOpen.value = false;
-  window.location.reload();
+  authStore.logout().then(() => {
+    isAuthenticate.value = false;
+    isDropdownOpen.value = false;
+  });
 }
 
 const userInitials = computed(() => {

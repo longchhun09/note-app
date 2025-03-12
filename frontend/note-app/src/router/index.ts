@@ -1,6 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import type { RouteRecordRaw, NavigationGuardNext, RouteLocationNormalized } from 'vue-router'
-import NotesLayout from '../views/NotesLayout.vue'
+import NotesLayout from '@/views/NotesLayout.vue'
 import { useAuthStore } from '@/stores/authStore'
 
 const HOME_ROUTE: RouteRecordRaw = {
@@ -12,7 +12,7 @@ const NOTE_CHILDREN_ROUTES: RouteRecordRaw[] = [
   {
     path: '',
     name: 'notes',
-    component: () => import('../views/NoteWelcome.vue')
+    component: () => import('@/views/NoteWelcome.vue')
   },
   {
     path: ':id',
@@ -51,14 +51,14 @@ const LOGIN_ROUTE: RouteRecordRaw = {
   path: '/login',
   name: 'login',
   meta: { guest: true },
-  component: () => import('../views/LoginView.vue')
+  component: () => import('@/views/LoginView.vue')
 }
 
 const REGISTER_ROUTE: RouteRecordRaw = {
   path: '/register',
   name: 'register',
   meta: { guest: true },
-  component: () => import('../views/RegisterView.vue')
+  component: () => import('@/views/RegisterView.vue')
 }
 
 const router = createRouter({
@@ -79,7 +79,7 @@ const handleAuthNavigation = async (
   const authStore = useAuthStore()
   const requiresAuth = to.matched.some(record => record.meta.requiresAuth)
   const isGuestRoute = to.matched.some(record => record.meta.guest)
-
+  
   if (authStore.token && !authStore.isLoading) await authStore.checkAuth()
 
   if (requiresAuth) {

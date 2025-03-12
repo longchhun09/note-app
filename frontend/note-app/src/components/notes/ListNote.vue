@@ -53,7 +53,7 @@ import { Plus, Edit, Trash } from 'lucide-vue-next';
 import EmptyState from './EmptyState.vue';
 import LoadingState from './LoadingState.vue';
 import ErrorNoteState from './ErrorNoteState.vue';
-import { formatDate } from '@/utils/dateFormatter.js';
+import { formatDate } from '@/utils/dateFormatter.ts';
 import Button from '@/components/common/Button.vue';
 import { useNoteNavigation } from '@/utils/noteNavigation';
 import ConfirmationDialog from '@/components/dialog/ConfirmationDialog.vue';
@@ -68,12 +68,8 @@ onMounted(() => {
     fetchNotes();
 });
 
-async function fetchNotes() {
-    try {
-        await noteStore.fetchNotes();
-    } catch (error) {
-        console.error('Failed to fetch notes:', error);
-    }
+function fetchNotes() {
+    noteStore.fetchNotes().then();
 }
 
 function getContentPreview(content: string | null): string {
@@ -90,11 +86,7 @@ function confirmDelete() {
     showDeleteConfirm.value = false;
 }
 
-async function deleteNote(id: number) {
-    try {
-        await noteStore.deleteNote(id);
-    } catch (error) {
-        console.error('Failed to delete note:', error);
-    }
+function deleteNote(id: number) {
+    noteStore.deleteNote(id).then();
 }
 </script>

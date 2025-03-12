@@ -116,7 +116,7 @@ import { ref, computed, onMounted, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useNoteStore } from '@/stores/noteStore';
 import type { Note } from '@/types/Note';
-import { formatDate } from '@/utils/dateFormatter';
+import { formatDate } from '@/utils/dateFormatter.ts';
 import ConfirmationDialog from '@/components/dialog/ConfirmationDialog.vue';
 import Button from '@/components/common/Button.vue';
 
@@ -256,8 +256,9 @@ async function saveNote() {
       await noteStore.createNote({
         title: editableNote.value.title,
         content: editableNote.value.content
+      }).then(() => {
+        router.push('/notes');
       });
-      router.push('/notes');
     } else if (note.value) {
       
       await noteStore.updateNote({
@@ -267,8 +268,7 @@ async function saveNote() {
       });
       
       const updatedNote = noteStore.getNoteById(note.value.id);
-      console.log('updatedNote', updatedNote);
-      
+
       if (updatedNote) {
         note.value = updatedNote;
       }
@@ -314,7 +314,7 @@ watch(() => props.editMode, (newValue) => {
   if (newValue && note.value) {
     editableNote.value = {
       title: note.value.title,
-      content: note.value.content
+      content: note.value.content ?? ''
     };
   }
 });

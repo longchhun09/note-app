@@ -135,7 +135,7 @@ const validateForm = () => {
     return isValid;
 };
 
-const handleRegister = async () => {
+const handleRegister = () => {
     if (!validateForm()) {
         return;
     }
@@ -144,15 +144,14 @@ const handleRegister = async () => {
 
     try {
         isLoading.value = true;
-        await authStore.register({
+        authStore.register({
             username: formData.username.trim(),
             password: formData.password,
             email: formData.email,
             confirmPassword: formData.confirmPassword
+        }).then(() => {
+            router.push({ name: 'login' });
         });
-
-        // Navigate to login page after successful registration
-        router.push({ name: 'login' });
     } catch (error) {
         console.error('Registration error:', error);
         errorMessage.value = authStore.error || 'Failed to register. Please try again.';
