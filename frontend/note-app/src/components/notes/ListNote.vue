@@ -63,22 +63,14 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref, computed } from 'vue';
-import { useRoute } from 'vue-router';
+import { onMounted } from 'vue';
 import { useNoteStore } from '@/stores/noteStore';
 import { Plus, Edit, Trash } from 'lucide-vue-next';
 import EmptyState from './EmptyState.vue';
 import LoadingState from './LoadingState.vue';
 import ErrorNoteState from './ErrorNoteState.vue';
 import { formatDate } from '@/utils/dateFormatter.js';
-const route = useRoute();
 const noteStore = useNoteStore();
-const noteToDelete = ref<number | null>(null);
-
-const currentNoteId = computed(() => {
-  const id = route.params.id;
-  return id ? parseInt(id as string) : null;
-});
 
 onMounted(() => {
     fetchNotes();
