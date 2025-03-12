@@ -54,12 +54,20 @@ const LOGIN_ROUTE: RouteRecordRaw = {
   component: () => import('../views/LoginView.vue')
 }
 
+const REGISTER_ROUTE: RouteRecordRaw = {
+  path: '/register',
+  name: 'register',
+  meta: { guest: true },
+  component: () => import('../views/RegisterView.vue')
+}
+
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     HOME_ROUTE,
     NOTES_ROUTE,
     LOGIN_ROUTE,
+    REGISTER_ROUTE
   ],
 })
 
