@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
+import NotesLayout from '../views/NotesLayout.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -10,8 +11,38 @@ const router = createRouter({
     },
     {
       path: '/notes',
-      name: 'notes',
-      component: HomeView,
+      component: NotesLayout,
+      children: [
+        {
+          path: '',
+          name: 'notes',
+          component: () => import('../views/NoteWelcome.vue')
+        },
+        {
+          path: ':id',
+          name: 'note-detail',
+          component: () => import('@/components/notes/NotePanel.vue'),
+          props: route => ({ 
+            id: Number(route.params.id),
+            editMode: false
+          })
+        },
+        {
+          path: ':id/edit',
+          name: 'edit-note',
+          component: () => import('@/components/notes/NotePanel.vue'),
+          props: route => ({ 
+            id: Number(route.params.id),
+            editMode: true
+          })
+        },
+        {
+          path: 'new',
+          name: 'new-note',
+          component: () => import('@/components/notes/NotePanel.vue'),
+          props: { isNew: true }
+        }
+      ]
     },
     {
       path: '/user',
@@ -20,23 +51,6 @@ const router = createRouter({
       // this generates a separate chunk (About.[hash].js) for this route
       // which is lazy-loaded when the route is visited.
       component: () => import('../views/UserView.vue'),
-    },
-    {
-      path: '/notes/new',
-      name: 'new-note',
-      component: () => import('@/components/notes/NewNote.vue')
-    },
-    {
-      path: '/note/:id',
-      name: 'note-detail',
-      component: () => import('@/components/notes/DetailNote.vue'),
-      props: true
-    },
-    {
-      path: '/note/edit/:id',
-      name: 'edit-note',
-      component: () => import('@/components/notes/EditNote.vue'),
-      props: true
     }
   ],
 })
