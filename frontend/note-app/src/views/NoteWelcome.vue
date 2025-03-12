@@ -50,7 +50,7 @@
       </div>
       
       <div class="mt-8">
-        <Button text="Create New Note" @click="navigateToNewNote" :icon="Plus" />
+        <Button text="Create New Note" @click="navigateToNewNote" />
       </div>
     </div>
   </div>

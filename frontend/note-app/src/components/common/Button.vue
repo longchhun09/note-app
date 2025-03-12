@@ -1,13 +1,13 @@
 <template>
     <button :class="buttonClasses" :disabled="disabled" @click="$emit('click')">
-        <component :is="icon" v-if="icon" class="mr-1 h-4 w-4" />
+        <component :is="getIconComponent()" v-if="icon" class="mr-1 h-4 w-4" />
         {{ text }}
     </button>
 </template>
 
 <script setup lang="ts">
 import { computed, defineProps, defineEmits } from 'vue';
-import { Plus } from 'lucide-vue-next';
+import * as LucideIcons from 'lucide-vue-next';
 
 type ButtonVariant = 'primary' | 'secondary' | 'danger' | 'success';
 type ButtonSize = 'sm' | 'md' | 'lg';
@@ -28,8 +28,8 @@ const props = defineProps({
         validator: (value: string) => ['sm', 'md', 'lg'].includes(value)
     },
     icon: {
-        type: Object,
-        default: () => Plus
+        type: String,
+        default: 'Plus'
     },
     disabled: {
         type: Boolean,
@@ -67,4 +67,12 @@ const buttonClasses = computed(() => {
 
     return `${baseClasses} ${variantClasses} ${disabledClasses}`;
 });
+
+const getIconComponent = () => {
+    // Access the icon component from the imported Lucide icons
+    if (props.icon && props.icon in LucideIcons) {
+        return LucideIcons[props.icon as keyof typeof LucideIcons];
+    }
+    return null;
+};
 </script>

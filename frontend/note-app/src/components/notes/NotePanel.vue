@@ -34,41 +34,35 @@
 
         <div class="flex space-x-2">
           <template v-if="!isEditing && !isNew">
-            <button 
+            <Button 
               @click="toggleEditMode" 
-              class="bg-blue-500 text-white px-3 py-1.5 text-sm rounded-md hover:bg-blue-600 flex items-center"
+              variant="primary"
+              text="Edit"
+              icon="Edit"
             >
-              <Edit class="mr-1" size="16" /> Edit
-            </button>
-            <button 
+            </Button>
+            <Button 
               @click="confirmDelete" 
-              class="bg-red-500 text-white px-3 py-1.5 text-sm rounded-md hover:bg-red-600 flex items-center"
-            >
-              <Trash class="mr-1" size="16" /> Delete
-            </button>
+              variant="danger"
+              text="Delete"
+              icon="Trash"
+            />
           </template>
           <template v-else>
-            <button 
+            <Button 
               @click="saveNote" 
-              class="bg-green-500 text-white px-3 py-1.5 text-sm rounded-md hover:bg-green-600 flex items-center"
+              class="bg-green-500 text-white hover:bg-green-600"
               :disabled="saving"
-            >
-              <span v-if="saving" class="flex items-center">
-                <svg class="animate-spin h-4 w-4 mr-1" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                  <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                  <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                </svg>
-                Saving...
-              </span>
-              <span v-else class="flex items-center">
-                <Save class="mr-1" size="16" /> Save
-              </span>
-            </button>
-            <button 
+              text="Save"
+              icon="Save"
+            />
+            <Button
               @click="cancelEdit" 
-              class="border border-gray-300 text-gray-700 px-3 py-1.5 text-sm rounded-md hover:bg-gray-100 flex items-center"
+              class="border border-gray-300"
+              text="Cancel"
+              icon="X"
+              variant="secondary"
             >
-              <X class="mr-1" size="16" /> Cancel
             </button>
           </template>
         </div>
@@ -107,26 +101,13 @@
       </div>
     </div>
 
-    <div v-if="showDeleteConfirm" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div class="bg-white rounded-lg p-6 max-w-sm mx-auto">
-        <h3 class="text-lg font-bold mb-4">Confirm Delete</h3>
-        <p class="mb-6">Are you sure you want to delete this note? This action cannot be undone.</p>
-        <div class="flex justify-end space-x-3">
-          <button 
-            @click="showDeleteConfirm = false" 
-            class="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50"
-          >
-            Cancel
-          </button>
-          <button 
-            @click="deleteNote" 
-            class="px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600"
-          >
-            Delete
-          </button>
-        </div>
-      </div>
-    </div>
+        <ConfirmationDialog
+          v-model="showDeleteConfirm"
+          icon="Trash"
+          button-variant="danger"
+          @confirm="deleteNote"
+          @cancel="showDeleteConfirm = false"
+        />
   </div>
 </template>
 
@@ -134,9 +115,10 @@
 import { ref, computed, onMounted, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useNoteStore } from '@/stores/noteStore';
-import { Edit, Trash, Save, X } from 'lucide-vue-next';
 import type { Note } from '@/types/Note';
 import { formatDate } from '@/utils/dateFormatter';
+import ConfirmationDialog from '@/components/dialog/ConfirmationDialog.vue';
+import Button from '@/components/common/Button.vue';
 
 const props = defineProps({
   id: {

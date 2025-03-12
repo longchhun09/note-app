@@ -86,7 +86,7 @@ export const useNoteStore = defineStore('noteStore', {
         this.isLoading = false;
       }
     },
-    
+
     getNoteById(id: number): Note | undefined {
       return this.notes.find(note => note.id === id);
     }

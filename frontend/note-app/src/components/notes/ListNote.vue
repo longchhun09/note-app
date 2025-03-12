@@ -2,7 +2,7 @@
     <div class="h-full flex flex-col overflow-hidden p-4">
         <div class="flex justify-between items-center mb-4">
             <h1 class="text-xl font-bold text-gray-800">My Notes</h1>
-            <Button text="New Note" @click="navigateToNewNote" :icon="Plus" />
+            <Button text="New Note" @click="navigateToNewNote"/>
         </div>
         <LoadingState v-if="noteStore.isLoading" />
         <ErrorNoteState v-else-if="noteStore.error" :noteStore  />
@@ -42,7 +42,7 @@
                             <Edit class="h-4 w-4 text-gray-600" />
                         </router-link>
                         <button 
-                            @click.stop="confirmDelete(note.id)" 
+                            @click.stop="showDeleteConfirmation(note.id)" 
                             class="bg-transparent border-none text-xl cursor-pointer p-1.5 rounded-full flex items-center justify-center transition-colors hover:bg-red-50" 
                             title="Delete Note"
                         >
@@ -52,11 +52,13 @@
                 </div>
             </router-link>
         </div>
+        <ConfirmationDialog v-model="showDeleteConfirm" @confirm="confirmDelete" @cancel="showDeleteConfirm = false" />
+
     </div>
 </template>
 
 <script setup lang="ts">
-import { onMounted } from 'vue';
+import { onMounted, ref } from 'vue';
 import { useNoteStore } from '@/stores/noteStore';
 import { Plus, Edit, Trash } from 'lucide-vue-next';
 import EmptyState from './EmptyState.vue';
@@ -65,9 +67,13 @@ import ErrorNoteState from './ErrorNoteState.vue';
 import { formatDate } from '@/utils/dateFormatter.js';
 import Button from '@/components/common/Button.vue';
 import { useNoteNavigation } from '@/utils/noteNavigation';
+import ConfirmationDialog from '@/components/dialog/ConfirmationDialog.vue';
 
 const noteStore = useNoteStore();
 const { navigateToNewNote } = useNoteNavigation();
+
+const showDeleteConfirm = ref(false);
+const idToDelete = ref(0);
 
 onMounted(() => {
     fetchNotes();
@@ -86,10 +92,13 @@ function getContentPreview(content: string | null): string {
     return content.length > 100 ? content.substring(0, 100) + '...' : content;
 }
 
-function confirmDelete(id: number) {
-    if (confirm('Are you sure you want to delete this note?')) {
-        deleteNote(id);
-    }
+function showDeleteConfirmation(id: number) {
+    idToDelete.value = id;
+    showDeleteConfirm.value = true;
+}
+function confirmDelete() {
+    deleteNote(idToDelete.value);
+    showDeleteConfirm.value = false;
 }
 
 async function deleteNote(id: number) {
