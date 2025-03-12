@@ -91,13 +91,15 @@ namespace NoteApi.Controllers
             }
         }
 
-        // PUT: api/Notes/5
+        // PUT: api/notes/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateNote(int id, Note note)
+        public async Task<IActionResult> UpdateNote(int id, UpdateNoteDTO noteDTO)
         {
             try
             {
-                if (id != note.Id)
+                var userId = 4;
+
+                if (id != noteDTO.Id)
                 {
                     return BadRequest("Note ID in the URL does not match the ID in the request body");
                 }
@@ -107,36 +109,13 @@ namespace NoteApi.Controllers
                     return BadRequest(ModelState);
                 }
 
-                var existingNote = await _context.Notes.FindAsync(id);
+                var existingNote = await _notesService.UpdateNoteAsync(id, noteDTO, userId);
+
                 if (existingNote == null)
                 {
                     return NotFound($"Note with ID {id} not found");
                 }
-
-                // Preserve the original creation date
-                note.CreatedAt = existingNote.CreatedAt;
-                note.UpdatedAt = DateTime.UtcNow;
-
-                _context.Entry(existingNote).State = EntityState.Detached;
-                _context.Entry(note).State = EntityState.Modified;
-
-                try
-                {
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!NoteExists(id))
-                    {
-                        return NotFound($"Note with ID {id} not found");
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-
-                return NoContent();
+                return existingNote ? NoContent() : NotFound();
             }
             catch (Exception ex)
             {
@@ -145,33 +124,20 @@ namespace NoteApi.Controllers
             }
         }
 
-        // DELETE: api/Notes/5
+        // DELETE: api/notes/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteNote(int id)
+        public async Task<IActionResult> DeleteNote(int id, int userId)
         {
             try
             {
-                var note = await _context.Notes.FindAsync(id);
-                if (note == null)
-                {
-                    return NotFound($"Note with ID {id} not found");
-                }
-
-                _context.Notes.Remove(note);
-                await _context.SaveChangesAsync();
-
-                return NoContent();
+                var result = await _notesService.DeleteNoteAsync(id, userId);
+                return result ? NoContent() : NotFound();
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error occurred while deleting note with ID {Id}", id);
                 return StatusCode(500, $"An error occurred while deleting note {id}. Please try again later.");
             }
-        }
-
-        private bool NoteExists(int id)
-        {
-            return _context.Notes.Any(e => e.Id == id);
         }
     }
 }

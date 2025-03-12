@@ -18,11 +18,9 @@ namespace NoteApi.Models
         [MaxLength(100)]
         public required string Email { get; set; }
         
-        [Required]
         [JsonIgnore]
         public required byte[] PasswordHash { get; set; }
         
-        [Required]
         [JsonIgnore]
         public required byte[] PasswordSalt { get; set; }
         
