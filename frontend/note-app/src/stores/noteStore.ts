@@ -53,12 +53,22 @@ export const useNoteStore = defineStore('noteStore', {
       this.error = null;
       
       try {
-        const response = await axios.put(`${API_URL}/${note.id}`, note);
-        const index = this.notes.findIndex(n => n.id === note.id);
+        await axios.put(`${API_URL}/${note.id}`, note);
+        const index = this.notes.findIndex(n => n.id === note.id);        
         if (index !== -1) {
-          this.notes[index] = response.data;
+          const existingNote = this.notes[index];
+          const updatedNote: Note = {
+            ...existingNote,
+            title: note.title,
+            content: note.content ?? existingNote.content,
+            updatedAt: new Date().toISOString()
+          };
+          
+          this.notes[index] = updatedNote;
+          
+          return updatedNote;
         }
-        return response.data;
+        
       } catch (error) {
         const axiosError = error as AxiosError;
         const errorMessage = axiosError.response?.data?.message || axiosError.message || 'Failed to update note';
