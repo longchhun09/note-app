@@ -1,5 +1,5 @@
 <template>
-  <div class="notes-layout flex h-screen">
+  <div class="notes-layout flex h-screen w-screen">
     <div class="notes-sidebar w-80 border-r border-gray-200 overflow-y-auto">
       <ListNote />
     </div>

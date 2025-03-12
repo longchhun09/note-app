@@ -1,6 +1,5 @@
 <template>
   <div class="note-panel bg-white rounded-lg shadow p-6">
-    <!-- Loading state -->
     <div v-if="loading" class="flex justify-center items-center py-12">
       <svg class="animate-spin h-10 w-10 text-blue-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
         <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
@@ -8,15 +7,12 @@
       </svg>
     </div>
 
-    <!-- Error state -->
     <div v-else-if="error" class="bg-red-50 border border-red-200 text-red-800 px-4 py-3 rounded relative mb-6">
       <strong class="font-bold">Error:</strong>
       <span class="block sm:inline">{{ error }}</span>
     </div>
 
-    <!-- Content when not loading -->
     <div v-else>
-      <!-- Header with title and actions -->
       <div class="flex justify-between items-start mb-6">
         <div class="w-3/4">
           <h2 v-if="isNew" class="text-2xl font-bold text-gray-800">Create New Note</h2>
@@ -30,14 +26,12 @@
           </div>
           <h2 v-else class="text-2xl font-bold text-gray-800 mb-1">{{ note?.title }}</h2>
           
-          <!-- Metadata shown in view mode -->
           <div v-if="!isEditing && !isNew" class="text-sm text-gray-500 flex space-x-4 mt-2">
             <span>Created: {{ formatDate(note?.createdAt) }}</span>
             <span>Updated: {{ formatDate(note?.updatedAt) }}</span>
           </div>
         </div>
 
-        <!-- Action buttons -->
         <div class="flex space-x-2">
           <template v-if="!isEditing && !isNew">
             <button 
@@ -80,9 +74,7 @@
         </div>
       </div>
 
-      <!-- Note content area -->
       <div class="mt-4">
-        <!-- Edit mode form -->
         <div v-if="isEditing || isNew" class="space-y-4">
           <div v-if="isNew" class="mb-4">
             <label for="title" class="block text-sm font-medium text-gray-700 mb-1">Title</label>
@@ -109,14 +101,12 @@
           </div>
         </div>
 
-        <!-- View mode content -->
         <div v-else class="prose max-w-none">
           <div class="whitespace-pre-line text-gray-700">{{ note?.content }}</div>
         </div>
       </div>
     </div>
 
-    <!-- Confirmation dialog -->
     <div v-if="showDeleteConfirm" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
       <div class="bg-white rounded-lg p-6 max-w-sm mx-auto">
         <h3 class="text-lg font-bold mb-4">Confirm Delete</h3>
@@ -147,7 +137,6 @@ import { useNoteStore } from '@/stores/noteStore';
 import { Edit, Trash, Save, X } from 'lucide-vue-next';
 import type { Note } from '@/types/Note';
 
-// Props
 const props = defineProps({
   id: {
     type: Number,
