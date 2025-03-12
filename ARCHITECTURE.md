@@ -77,8 +77,6 @@ Components are the building blocks of the UI.
 - **Layout Components**: Define the overall structure (headers, footers)
 - **Note Components**:
   - `ListNote.vue`: Displays a list of notes
-  - `DetailNote.vue`: Shows and edits a single note
-  - `NewNote.vue`: Creates a new note
   - `NotePanel.vue`: Container for note-related components
 
 - **Auth Components**:
