@@ -6,48 +6,18 @@
         </div>
         
         <div class="flex flex-col mb-4 space-y-2">
-            <div class="relative">
-                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <Search class="h-4 w-4 text-gray-400" />
-                </div>
-                <input 
-                    type="text" 
-                    v-model="searchTerm" 
-                    placeholder="Search notes..." 
-                    class="pl-10 pr-4 py-2 w-full border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
-                />
-            </div>
-            <div class="flex space-x-2">
-                <span class="text-sm text-gray-600 self-center">Sort by:</span>
-                <button 
-                    @click="setSortField('title')" 
-                    class="text-sm py-1 px-2 rounded-md transition-colors"
-                    :class="sortField === 'title' ? 'bg-blue-100 text-blue-700' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'"
-                >
-                    Title
-                </button>
-                <button 
-                    @click="setSortField('updatedAt')" 
-                    class="text-sm py-1 px-2 rounded-md transition-colors"
-                    :class="sortField === 'updatedAt' ? 'bg-blue-100 text-blue-700' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'"
-                >
-                    Date
-                </button>
-                <button 
-                    @click="toggleSortOrder()" 
-                    class="text-sm py-1 px-2 rounded-md bg-gray-100 text-gray-700 hover:bg-gray-200"
-                >
-                    <SortAsc v-if="sortOrder === 'asc'" class="h-4 w-4" />
-                    <SortDesc v-else class="h-4 w-4" />
-                </button>
-            </div>
+            <SearchBar v-model="searchTerm" />
+            <SortControls 
+                v-model:sortField="sortField" 
+                v-model:sortOrder="sortOrder" 
+                @sort-change="fetchNotes" 
+            />
         </div>
         
         <LoadingState v-if="noteStore.isLoading" />
         <ErrorNoteState v-else-if="noteStore.error" :noteStore />
         <EmptyState v-else-if="noteStore.notes.length === 0" />
         
-        <!-- No Search Results -->
         <div v-else-if="filteredAndSortedNotes.length === 0" class="flex flex-col items-center justify-center py-8 text-center text-gray-500">
             <Search class="h-10 w-10 mb-2" />
             <p>No notes found matching your search.</p>
@@ -87,20 +57,21 @@
         </div>
         <ConfirmationDialog v-model="showDeleteConfirm" @confirm="confirmDelete" @cancel="showDeleteConfirm = false"
             icon="Trash" button-variant="danger" />
-
     </div>
 </template>
 <script setup lang="ts">
 import { onMounted, ref, computed, watch } from 'vue';
 import { useNoteStore } from '@/stores/noteStore';
-import { Edit, Trash, Search, SortAsc, SortDesc } from 'lucide-vue-next';
-import EmptyState from './EmptyState.vue';
+import { Edit, Trash, Search } from 'lucide-vue-next';
 import LoadingState from './LoadingState.vue';
 import ErrorNoteState from './ErrorNoteState.vue';
+import EmptyState from './EmptyState.vue';
 import { formatDate } from '@/utils/dateFormatter.ts';
 import Button from '@/components/common/Button.vue';
 import { useNoteNavigation } from '@/utils/noteNavigation';
 import ConfirmationDialog from '@/components/common/ConfirmationDialog.vue';
+import SearchBar from './SearchBar.vue';
+import SortControls from './SortControls.vue';
 
 const noteStore = useNoteStore();
 const { navigateToNewNote } = useNoteNavigation();
@@ -115,15 +86,6 @@ const filteredAndSortedNotes = computed(() => {
     return noteStore.notes;
 });
 
-function setSortField(field: 'title' | 'updatedAt') {
-    sortField.value = field;
-    fetchNotes();
-}
-
-function toggleSortOrder() {
-    sortOrder.value = sortOrder.value === 'asc' ? 'desc' : 'asc';
-    fetchNotes();
-}
 onMounted(() => {
     fetchNotes();
 });
