@@ -10,35 +10,31 @@
           </router-link>
         </p>
       </div>
-      <form class="mt-8 space-y-6" @submit.prevent="handleLogin">
+      <Form @submit="handleLogin" :validation-schema="schema" class="mt-8 space-y-6" v-slot="{ errors }">
         <div class="rounded-md shadow-sm -space-y-px">
           <div class="mb-4">
             <label for="username" class="sr-only">Username</label>
-            <input
+            <Field
               id="username"
-              v-model="credentials.username"
               name="username"
               type="text"
-              required
               class="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
               :class="{ 'border-red-500': errors.username }"
               placeholder="Username"
             />
-            <p v-if="errors.username" class="text-red-500 text-sm mt-1">{{ errors.username }}</p>
+            <ErrorMessage name="username" class="text-red-500 text-sm mt-1" />
           </div>
           <div>
             <label for="password" class="sr-only">Password</label>
-            <input
+            <Field
               id="password"
-              v-model="credentials.password"
               name="password"
               type="password"
-              required
               class="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
               :class="{ 'border-red-500': errors.password }"
               placeholder="Password"
             />
-            <p v-if="errors.password" class="text-red-500 text-sm mt-1">{{ errors.password }}</p>
+            <ErrorMessage name="password" class="text-red-500 text-sm mt-1" />
           </div>
         </div>
         
@@ -65,64 +61,39 @@
             </span>
           </button>
         </div>
-      </form>
+      </Form>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref, reactive } from 'vue';
+import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { useAuthStore } from '@/stores/authStore';
 import { LogIn } from 'lucide-vue-next';
+import { Form, Field, ErrorMessage } from 'vee-validate';
+import * as yup from 'yup';
 
 const router = useRouter();
 const authStore = useAuthStore();
 
-const credentials = reactive({
-  username: '',
-  password: ''
-});
-
-const errors = reactive({
-  username: '',
-  password: ''
-});
-
 const isLoading = ref(false);
 const errorMessage = ref('');
 
-const validateForm = () => {
-  let isValid = true;
-  
-  errors.username = '';
-  errors.password = '';
-  
-  if (!credentials.username.trim()) {
-    errors.username = 'Username is required';
-    isValid = false;
-  }
-  
-  if (!credentials.password) {
-    errors.password = 'Password is required';
-    isValid = false;
-  }
-  
-  return isValid;
-};
+// Define validation schema
+const schema = yup.object({
+  username: yup.string().required('Username is required'),
+  password: yup.string().required('Password is required')
+});
 
-const handleLogin = async () => {
-  if (!validateForm()) {
-    return;
-  }
-  
+const handleLogin = async (values) => {
   errorMessage.value = '';
   
   try {
     isLoading.value = true;
     await authStore.login({
-      username: credentials.username.trim(),
-      password: credentials.password
+      username: values.username.trim(),
+      password: values.password
     }).then(() => {
       router.push({ name: 'notes' });
     });

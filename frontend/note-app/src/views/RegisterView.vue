@@ -10,37 +10,35 @@
                     </router-link>
                 </p>
             </div>
-            <form class="mt-8 space-y-6" @submit.prevent="handleRegister">
+            <Form @submit="handleRegister" :validation-schema="schema" v-slot="{ errors }" class="mt-8 space-y-6">
                 <div class="rounded-md shadow-sm -space-y-px">
                     <div class="mb-4">
                         <label for="username" class="sr-only">Username</label>
-                        <input id="username" v-model="formData.username" name="username" type="text" required
+                        <Field id="username" name="username" type="text"
                             class="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
                             :class="{ 'border-red-500': errors.username }" placeholder="Username" />
-                        <p v-if="errors.username" class="text-red-500 text-sm mt-1">{{ errors.username }}</p>
+                        <ErrorMessage name="username" class="text-red-500 text-sm mt-1" />
                     </div>
                     <div class="mb-4">
                         <label for="email" class="sr-only">Email</label>
-                        <input id="email" v-model="formData.email" name="email" type="text" required
+                        <Field id="email" name="email" type="text"
                             class="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
                             :class="{ 'border-red-500': errors.email }" placeholder="Email" />
-                        <p v-if="errors.email" class="text-red-500 text-sm mt-1">{{ errors.email }}</p>
+                        <ErrorMessage name="email" class="text-red-500 text-sm mt-1" />
                     </div>
                     <div class="mb-4">
                         <label for="password" class="sr-only">Password</label>
-                        <input id="password" v-model="formData.password" name="password" type="password" required
+                        <Field id="password" name="password" type="password"
                             class="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
                             :class="{ 'border-red-500': errors.password }" placeholder="Password" />
-                        <p v-if="errors.password" class="text-red-500 text-sm mt-1">{{ errors.password }}</p>
+                        <ErrorMessage name="password" class="text-red-500 text-sm mt-1" />
                     </div>
                     <div>
                         <label for="confirmPassword" class="sr-only">Confirm Password</label>
-                        <input id="confirmPassword" v-model="formData.confirmPassword" name="confirmPassword"
-                            type="password" required
+                        <Field id="confirmPassword" name="confirmPassword" type="password"
                             class="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
                             :class="{ 'border-red-500': errors.confirmPassword }" placeholder="Confirm Password" />
-                        <p v-if="errors.confirmPassword" class="text-red-500 text-sm mt-1">{{ errors.confirmPassword }}
-                        </p>
+                        <ErrorMessage name="confirmPassword" class="text-red-500 text-sm mt-1" />
                     </div>
                 </div>
 
@@ -68,90 +66,49 @@
                         </span>
                     </button>
                 </div>
-            </form>
+            </Form>
         </div>
     </div>
 </template>
 
 <script setup>
-import { ref, reactive } from 'vue';
+import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { useAuthStore } from '@/stores/authStore';
 import { UserPlus } from 'lucide-vue-next';
+import { Form, Field, ErrorMessage } from 'vee-validate';
+import * as yup from 'yup';
 
 const router = useRouter();
 const authStore = useAuthStore();
 
-const formData = reactive({
-    username: '',
-    email: '',
-    password: '',
-    confirmPassword: ''
-});
-
-const errors = reactive({
-    username: '',
-    email: '',
-    password: '',
-    confirmPassword: ''
-});
-
 const isLoading = ref(false);
 const errorMessage = ref('');
 
-const validateForm = () => {
-    let isValid = true;
+const schema = yup.object({
+    username: yup.string().required('Username is required'),
+    email: yup.string().required('Email is required').email('Please enter a valid email'),
+    password: yup.string()
+        .required('Password is required')
+        .min(6, 'Password must be at least 6 characters'),
+    confirmPassword: yup.string()
+        .required('Please confirm your password')
+        .oneOf([yup.ref('password')], 'Passwords do not match')
+});
 
-    // Reset errors
-    errors.username = '';
-    errors.email = '';
-    errors.password = '';
-    errors.confirmPassword = '';
-
-    // Validate username
-    if (!formData.username.trim()) {
-        errors.username = 'Username is required';
-        isValid = false;
-    }
-
-    // Validate password
-    if (!formData.password) {
-        errors.password = 'Password is required';
-        isValid = false;
-    } else if (formData.password.length < 6) {
-        errors.password = 'Password must be at least 6 characters';
-        isValid = false;
-    }
-
-    // Validate confirm password
-    if (!formData.confirmPassword) {
-        errors.confirmPassword = 'Please confirm your password';
-        isValid = false;
-    } else if (formData.password !== formData.confirmPassword) {
-        errors.confirmPassword = 'Passwords do not match';
-        isValid = false;
-    }
-
-    return isValid;
-};
-
-const handleRegister = () => {
-    if (!validateForm()) {
-        return;
-    }
-
+const handleRegister = async (values) => {
     errorMessage.value = '';
-
+    isLoading.value = true;
+    
     try {
-        isLoading.value = true;
-        authStore.register({
-            username: formData.username.trim(),
-            password: formData.password,
-            email: formData.email,
-            confirmPassword: formData.confirmPassword
-        }).then(() => {
-            router.push({ name: 'login' });
+        await authStore.register({
+            username: values.username.trim(),
+            password: values.password,
+            email: values.email,
+            confirmPassword: values.confirmPassword
         });
+        
+        router.push({ name: 'login' });
     } catch (error) {
         console.error('Registration error:', error);
         errorMessage.value = authStore.error || 'Failed to register. Please try again.';
