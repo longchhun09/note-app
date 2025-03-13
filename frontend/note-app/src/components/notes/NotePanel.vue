@@ -39,7 +39,7 @@
             <Button @click="confirmDelete" variant="danger" text="Delete" icon="Trash" />
           </template>
           <template v-else>
-            <Button @click="saveNote" class="bg-green-500 text-white hover:bg-green-600" :disabled="saving" text="Save"
+            <Button type="submit" form="noteForm" class="bg-green-500 text-white hover:bg-green-600" :disabled="saving" text="Save"
               icon="Save" />
             <Button @click="cancelEdit" class="border border-gray-300" text="Cancel" icon="X" variant="secondary">
             </button>
@@ -48,23 +48,22 @@
       </div>
 
       <div class="mt-4">
-        <div v-if="isEditing || isNew" class="space-y-4">
+        <Form v-if="isEditing || isNew" :validation-schema="validationSchema" :initial-values="editableNote" @submit="saveNote" class="space-y-4" id="noteForm" :key="`form-${JSON.stringify(editableNote)}`">
           <div v-if="isNew" class="mb-4">
             <label for="title" class="block text-sm font-medium text-gray-700 mb-1">Title</label>
-            <input id="title" type="text" v-model="editableNote.title"
+            <Field id="title" name="title" type="text"
               class="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
               placeholder="Note Title" />
-            <p v-if="titleError" class="mt-1 text-sm text-red-600">{{ titleError }}</p>
+            <ErrorMessage name="title" class="mt-1 text-sm text-red-600" />
           </div>
 
           <div>
             <label for="content" class="block text-sm font-medium text-gray-700 mb-1">Content</label>
-            <textarea id="content" v-model="editableNote.content" rows="12"
+            <Field id="content" name="content" as="textarea" rows="12"
               class="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-              placeholder="Write your note here..."></textarea>
-            <p v-if="contentError" class="mt-1 text-sm text-red-600">{{ contentError }}</p>
-          </div>
-        </div>
+              placeholder="Write your note here..."></Field>
+            <ErrorMessage name="content" class="mt-1 text-sm text-red-600" /></div>
+        </Form>
 
         <div v-else class="prose max-w-none">
           <div class="whitespace-pre-line text-gray-700">{{ note?.content }}</div>
@@ -85,6 +84,8 @@ import type { Note } from '@/types/Note';
 import { formatDate } from '@/utils/dateFormatter.ts';
 import ConfirmationDialog from '@/components/dialog/ConfirmationDialog.vue';
 import Button from '@/components/common/Button.vue';
+import { Form, Field, ErrorMessage } from 'vee-validate';
+import * as yup from 'yup';
 
 const props = defineProps({
   id: {
@@ -118,11 +119,15 @@ const editableNote = ref<{ title: string, content: string }>({
 });
 const isEditing = ref(props.editMode);
 const showDeleteConfirm = ref(false);
-const titleError = ref('');
-const contentError = ref('');
 
 // Computed properties
 const isNew = computed(() => props.isNew);
+
+// Validation schema
+const validationSchema = yup.object({
+  title: yup.string().required('Title is required'),
+  content: yup.string().required('Content is required')
+});
 
 // Methods
 function initializeNote() {
@@ -182,8 +187,6 @@ function cancelEdit() {
       content: note.value?.content || ''
     };
     isEditing.value = false;
-    titleError.value = '';
-    contentError.value = '';
 
     router.replace({
       path: route.path,
@@ -192,36 +195,16 @@ function cancelEdit() {
   }
 }
 
-function validateForm() {
-  let isValid = true;
 
-  titleError.value = '';
-  contentError.value = '';
-
-  if (!editableNote.value.title.trim()) {
-    titleError.value = 'Title is required';
-    isValid = false;
-  }
-
-  if (!editableNote.value.content.trim()) {
-    contentError.value = 'Content is required';
-    isValid = false;
-  }
-
-  return isValid;
-}
-
-async function saveNote() {
-  if (!validateForm()) return;
-
+async function saveNote(values: { title: string, content: string }) {
   saving.value = true;
   error.value = '';
 
   try {
     if (props.isNew) {
       await noteStore.createNote({
-        title: editableNote.value.title,
-        content: editableNote.value.content
+        title: values.title,
+        content: values.content
       }).then(() => {
         router.push('/notes');
       });
@@ -229,8 +212,8 @@ async function saveNote() {
 
       await noteStore.updateNote({
         id: note.value.id,
-        title: editableNote.value.title,
-        content: editableNote.value.content
+        title: values.title,
+        content: values.content
       });
 
       const updatedNote = noteStore.getNoteById(note.value.id);
@@ -284,6 +267,17 @@ watch(() => props.editMode, (newValue) => {
     };
   }
 });
+
+// Add watch for editableNote to update the form
+watch(editableNote, (newValue) => {
+  // This ensures edits to title in the header sync to the form
+  if (isEditing.value) {
+    // The form will pick up these values via :initial-values
+    editableNote.value = {
+      ...editableNote.value
+    };
+  }
+}, { deep: true });
 
 onMounted(() => {
   initializeNote();
