@@ -20,10 +20,6 @@
           </div>
           <h2 v-else class="text-2xl font-bold text-gray-800 mb-1">{{ note?.title }}</h2>
 
-          <div v-if="!isEditing && !isNew" class="text-sm text-gray-500 flex space-x-4 mt-2">
-            <span>Created: {{ formatDate(note?.createdAt) }}</span>
-            <span>Updated: {{ formatDate(note?.updatedAt) }}</span>
-          </div>
         </div>
 
         <div class="flex space-x-2">
@@ -58,9 +54,13 @@
               placeholder="Write your note here..."></Field>
             <ErrorMessage name="content" class="mt-1 text-sm text-red-600" /></div>
         </Form>
-
         <div v-else class="prose max-w-none">
-          <div class="whitespace-pre-line text-gray-700">{{ note?.content }}</div>
+          <div class="whitespace-pre-line text-gray-700">{{ note?.content }}
+            <div class="text-sm text-gray-500 flex space-x-4 mt-2 float-right">
+              <span>Created: {{ formatDate(note?.createdAt) }}</span>
+              <span>Updated: {{ formatDate(note?.updatedAt) }}</span>
+            </div>
+          </div>
         </div>
       </div>
     </div>
