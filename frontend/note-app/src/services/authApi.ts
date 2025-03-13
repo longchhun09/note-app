@@ -1,6 +1,6 @@
 import { ApiService } from './apiService';
 import type { ApiResponse } from './apiService';
-import type { LoginRequest, RegisterRequest, AuthResponse, User, AuthUser } from '../types/Auth';
+import type { LoginRequest, RegisterRequest, AuthResponse, AuthUser } from '@/types/Auth';
 
 export class AuthApi {
   private apiService: ApiService;
