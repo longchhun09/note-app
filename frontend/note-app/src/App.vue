@@ -168,7 +168,14 @@ onUnmounted(() => {
         </transition>
       </nav>
 
-      <main :class="{ 'flex-1': isAuthenticate }">
+      <main :class="{ 'flex-1 app__container': isAuthenticate }" class="min-h-screen m-0 grid place-content-center bg-[#F9F6EF] bg-blend-darken"
+  style="background-image: 
+    repeating-linear-gradient(135deg, transparent 0 6px, rgba(0,0,0,0.02) 0 9px),
+    radial-gradient(circle, #F9F6EF, #EBEBE3), 
+    radial-gradient(at 100% 20%, rgba(94,176,229,0.14), transparent 70%),
+    radial-gradient(at 20% 20%, rgba(243,208,96,0.14), transparent 70%),
+    radial-gradient(at 20% 100%, rgba(165,40,44,0.14), transparent 70%),
+    radial-gradient(at 100% 100%, rgba(174,225,205,0.14), transparent 70%);">
         <RouterView />
       </main>
     </div>

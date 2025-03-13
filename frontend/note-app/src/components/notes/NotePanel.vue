@@ -1,9 +1,12 @@
 <template>
-  <div class="note-panel bg-white rounded-lg shadow p-6">
+  <div class="note-panel p-6 note-card">
     <div v-if="loading" class="flex justify-center items-center py-12">
-      <svg class="animate-spin h-10 w-10 text-blue-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+      <svg class="animate-spin h-10 w-10 text-blue-500" xmlns="http://www.w3.org/2000/svg" fill="none"
+        viewBox="0 0 24 24">
         <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+        <path class="opacity-75" fill="currentColor"
+          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+        </path>
       </svg>
     </div>
 
@@ -14,18 +17,15 @@
 
     <div v-else>
       <div class="flex justify-between items-start mb-6">
-        <div class="w-3/4">
+        <div class="w-3/4 ">
           <h2 v-if="isNew" class="text-2xl font-bold text-gray-800">Create New Note</h2>
           <div v-else-if="isEditing">
-            <input 
-              type="text" 
-              v-model="editableNote.title" 
+            <input type="text" v-model="editableNote.title"
               class="text-2xl font-bold text-gray-800 w-full border-b border-blue-300 focus:border-blue-500 focus:outline-none pb-1"
-              placeholder="Note Title"
-            />
+              placeholder="Note Title" />
           </div>
           <h2 v-else class="text-2xl font-bold text-gray-800 mb-1">{{ note?.title }}</h2>
-          
+
           <div v-if="!isEditing && !isNew" class="text-sm text-gray-500 flex space-x-4 mt-2">
             <span>Created: {{ formatDate(note?.createdAt) }}</span>
             <span>Updated: {{ formatDate(note?.updatedAt) }}</span>
@@ -34,35 +34,14 @@
 
         <div class="flex space-x-2">
           <template v-if="!isEditing && !isNew">
-            <Button 
-              @click="toggleEditMode" 
-              variant="primary"
-              text="Edit"
-              icon="Edit"
-            >
+            <Button @click="toggleEditMode" variant="primary" text="Edit" icon="Edit">
             </Button>
-            <Button 
-              @click="confirmDelete" 
-              variant="danger"
-              text="Delete"
-              icon="Trash"
-            />
+            <Button @click="confirmDelete" variant="danger" text="Delete" icon="Trash" />
           </template>
           <template v-else>
-            <Button 
-              @click="saveNote" 
-              class="bg-green-500 text-white hover:bg-green-600"
-              :disabled="saving"
-              text="Save"
-              icon="Save"
-            />
-            <Button
-              @click="cancelEdit" 
-              class="border border-gray-300"
-              text="Cancel"
-              icon="X"
-              variant="secondary"
-            >
+            <Button @click="saveNote" class="bg-green-500 text-white hover:bg-green-600" :disabled="saving" text="Save"
+              icon="Save" />
+            <Button @click="cancelEdit" class="border border-gray-300" text="Cancel" icon="X" variant="secondary">
             </button>
           </template>
         </div>
@@ -72,25 +51,17 @@
         <div v-if="isEditing || isNew" class="space-y-4">
           <div v-if="isNew" class="mb-4">
             <label for="title" class="block text-sm font-medium text-gray-700 mb-1">Title</label>
-            <input 
-              id="title"
-              type="text" 
-              v-model="editableNote.title" 
+            <input id="title" type="text" v-model="editableNote.title"
               class="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-              placeholder="Note Title"
-            />
+              placeholder="Note Title" />
             <p v-if="titleError" class="mt-1 text-sm text-red-600">{{ titleError }}</p>
           </div>
-          
+
           <div>
             <label for="content" class="block text-sm font-medium text-gray-700 mb-1">Content</label>
-            <textarea 
-              id="content"
-              v-model="editableNote.content" 
-              rows="12"
+            <textarea id="content" v-model="editableNote.content" rows="12"
               class="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-              placeholder="Write your note here..."
-            ></textarea>
+              placeholder="Write your note here..."></textarea>
             <p v-if="contentError" class="mt-1 text-sm text-red-600">{{ contentError }}</p>
           </div>
         </div>
@@ -101,13 +72,8 @@
       </div>
     </div>
 
-        <ConfirmationDialog
-          v-model="showDeleteConfirm"
-          icon="Trash"
-          button-variant="danger"
-          @confirm="deleteNote"
-          @cancel="showDeleteConfirm = false"
-        />
+    <ConfirmationDialog v-model="showDeleteConfirm" icon="Trash" button-variant="danger" @confirm="deleteNote"
+      @cancel="showDeleteConfirm = false" />
   </div>
 </template>
 
@@ -170,9 +136,9 @@ function initializeNote() {
   } else if (props.id) {
     loading.value = true;
     error.value = '';
-    
+
     try {
-      const foundNote = noteStore.getNoteById(props.id);      
+      const foundNote = noteStore.getNoteById(props.id);
       if (foundNote) {
         note.value = foundNote;
         editableNote.value = {
@@ -199,10 +165,10 @@ function toggleEditMode() {
       content: note.value?.content || ''
     };
     isEditing.value = true;
-    
-    router.replace({ 
-      path: route.path, 
-      query: { ...route.query, edit: 'true' } 
+
+    router.replace({
+      path: route.path,
+      query: { ...route.query, edit: 'true' }
     });
   }
 }
@@ -218,39 +184,39 @@ function cancelEdit() {
     isEditing.value = false;
     titleError.value = '';
     contentError.value = '';
-    
-    router.replace({ 
-      path: route.path, 
-      query: {} 
+
+    router.replace({
+      path: route.path,
+      query: {}
     });
   }
 }
 
 function validateForm() {
   let isValid = true;
-  
+
   titleError.value = '';
   contentError.value = '';
-  
+
   if (!editableNote.value.title.trim()) {
     titleError.value = 'Title is required';
     isValid = false;
   }
-  
+
   if (!editableNote.value.content.trim()) {
     contentError.value = 'Content is required';
     isValid = false;
   }
-  
+
   return isValid;
 }
 
 async function saveNote() {
   if (!validateForm()) return;
-  
+
   saving.value = true;
   error.value = '';
-  
+
   try {
     if (props.isNew) {
       await noteStore.createNote({
@@ -260,24 +226,24 @@ async function saveNote() {
         router.push('/notes');
       });
     } else if (note.value) {
-      
+
       await noteStore.updateNote({
         id: note.value.id,
         title: editableNote.value.title,
         content: editableNote.value.content
       });
-      
+
       const updatedNote = noteStore.getNoteById(note.value.id);
 
       if (updatedNote) {
         note.value = updatedNote;
       }
-      
+
       isEditing.value = false;
 
-      router.replace({ 
-        path: route.path, 
-        query: {} 
+      router.replace({
+        path: route.path,
+        query: {}
       });
     }
   } catch (err) {
@@ -293,7 +259,7 @@ function confirmDelete() {
 
 async function deleteNote() {
   if (!note.value) return;
-  
+
   try {
     await noteStore.deleteNote(note.value.id);
     showDeleteConfirm.value = false;
@@ -324,3 +290,13 @@ onMounted(() => {
 });
 </script>
 
+<style scoped="scss">
+.note-card {
+  display: grid;
+  font-size: 1.2rem;
+  padding: 1rem;
+  border: 1vmin solid;
+  background-color: #ffe681;
+  box-shadow: 1vmin 1vmin 0 0 color-mix(in lab, currentcolor 80%, #0000);
+}
+</style>
