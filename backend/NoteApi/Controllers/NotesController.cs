@@ -37,12 +37,12 @@ namespace NoteApi.Controllers
 
         // GET: api/notes
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<NoteDTO>>> GetNotes()
+        public async Task<ActionResult<IEnumerable<NoteDTO>>> GetNotes([FromQuery] string searchTerm = null, [FromQuery] string sortField = null, [FromQuery] string sortOrder = "asc")
         {
             try
             {
                 var userId = GetUserIdFromClaims();
-                var notes = await _notesService.GetAllNotesAsync(userId);
+                var notes = await _notesService.GetAllNotesAsync(userId, searchTerm, sortField, sortOrder);
                 return Ok(notes);
             }
             catch (Exception ex)

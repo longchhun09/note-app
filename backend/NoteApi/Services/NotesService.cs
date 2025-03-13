@@ -41,9 +41,9 @@ namespace NoteApi.Services
             return await _notesRepository.DeleteAsync(id, userId);
         }
 
-        public async Task<IEnumerable<NoteDTO>> GetAllNotesAsync(int userId)
+        public async Task<IEnumerable<NoteDTO>> GetAllNotesAsync(int userId, string searchTerm = null, string sortField = null, string sortOrder = "asc")
         {
-            var notes = await _notesRepository.GetAllByUserIdAsync(userId);
+            var notes = await _notesRepository.GetAllByUserIdAsync(userId, searchTerm, sortField, sortOrder);
             return notes.Select(n => new NoteDTO
             {
                 Id = n.Id,
