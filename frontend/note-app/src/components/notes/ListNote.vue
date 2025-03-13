@@ -56,7 +56,7 @@ import ErrorNoteState from './ErrorNoteState.vue';
 import { formatDate } from '@/utils/dateFormatter.ts';
 import Button from '@/components/common/Button.vue';
 import { useNoteNavigation } from '@/utils/noteNavigation';
-import ConfirmationDialog from '@/components/dialog/ConfirmationDialog.vue';
+import ConfirmationDialog from '@/components/common/ConfirmationDialog.vue';
 
 const noteStore = useNoteStore();
 const { navigateToNewNote } = useNoteNavigation();

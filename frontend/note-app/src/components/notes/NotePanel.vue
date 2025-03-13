@@ -76,7 +76,7 @@ import { useRoute, useRouter } from 'vue-router';
 import { useNoteStore } from '@/stores/noteStore';
 import type { Note } from '@/types/Note';
 import { formatDate } from '@/utils/dateFormatter.ts';
-import ConfirmationDialog from '@/components/dialog/ConfirmationDialog.vue';
+import ConfirmationDialog from '@/components/common/ConfirmationDialog.vue';
 import Button from '@/components/common/Button.vue';
 import { Form, Field, ErrorMessage } from 'vee-validate';
 import * as yup from 'yup';
