@@ -26,6 +26,23 @@ export const useNoteStore = defineStore('noteStore', {
         this.isLoading = false;
       }
     },
+    
+    async fetchFilteredNotes(searchTerm?: string, sortField?: string, sortOrder?: string) {
+      this.isLoading = true;
+      this.error = null;
+      
+      try {
+        const response = await noteApi.getFilteredNotes(searchTerm, sortField, sortOrder);
+        this.notes = response.data;
+      } catch (error: any) {
+        const errorMessage = error.message || 'Failed to fetch filtered notes';
+        console.error('Error fetching filtered notes:', errorMessage);
+        this.error = errorMessage;
+        throw error;
+      } finally {
+        this.isLoading = false;
+      }
+    },
     async createNote(note: CreateNoteRequest) {
       this.isLoading = true;
       this.error = null;

@@ -15,6 +15,28 @@ export class NoteApi {
     return this.apiService.get<Note[]>(this.endpoint);
   }
 
+  public async getFilteredNotes(
+    searchTerm?: string,
+    sortField?: string,
+    sortOrder?: string
+  ): Promise<ApiResponse<Note[]>> {
+    const params: Record<string, string> = {};
+    
+    if (searchTerm) {
+      params.searchTerm = searchTerm;
+    }
+    
+    if (sortField) {
+      params.sortField = sortField;
+    }
+    
+    if (sortOrder) {
+      params.sortOrder = sortOrder;
+    }
+    
+    return this.apiService.get<Note[]>(this.endpoint, params);
+  }
+
   public async getNoteById(id: number): Promise<ApiResponse<Note>> {
     return this.apiService.get<Note>(`${this.endpoint}/${id}`);
   }
