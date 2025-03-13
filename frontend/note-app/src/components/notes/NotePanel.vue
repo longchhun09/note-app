@@ -24,9 +24,9 @@
 
         <div class="flex space-x-2">
           <template v-if="!isEditing && !isNew">
-            <Button @click="toggleEditMode" variant="primary" text="Edit" icon="Edit">
+            <Button @click="toggleEditMode" variant="secondary" text="" icon="Edit">
             </Button>
-            <Button @click="confirmDelete" variant="danger" text="Delete" icon="Trash" />
+            <Button @click="confirmDelete" variant="secondary" text="" icon="Trash" />
           </template>
           <template v-else>
             <Button type="submit" form="noteForm" class="bg-green-500 text-white hover:bg-green-600" :disabled="saving" text="Save"
