@@ -103,8 +103,10 @@ if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Notes API v1"));
-    app.UseCors("DevelopmentPolicy");
 }
+
+// TODO: remove this after integrate complete
+app.UseCors("DevelopmentPolicy");
 
 app.UseHttpsRedirection();
 
