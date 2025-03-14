@@ -1,11 +1,14 @@
-using Microsoft.IdentityModel.Tokens;
-using NoteApi.Models;
-using NoteApi.DTOs.Auth;
-using NoteApi.Services.Interfaces;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
+using System.Threading.Tasks;
+using Microsoft.Extensions.Configuration;
+using Microsoft.IdentityModel.Tokens;
+using NoteApi.DTOs.Auth;
+using NoteApi.Models;
+using NoteApi.Repositories.Interfaces;
+using NoteApi.Services.Interfaces;
 
 namespace NoteApi.Services
 {
@@ -18,7 +21,8 @@ namespace NoteApi.Services
         public AuthService(
             IUserRepository userRepository,
             IPasswordService passwordService,
-            IConfiguration configuration)
+            IConfiguration configuration
+        )
         {
             _userRepository = userRepository;
             _passwordService = passwordService;
@@ -28,19 +32,17 @@ namespace NoteApi.Services
         public async Task<AuthResponseDTO> LoginAsync(LoginDTO loginDto)
         {
             var user = await _userRepository.GetByUsernameAsync(loginDto.Username);
-            if (user == null || !_passwordService.VerifyPassword(loginDto.Password, user.PasswordHash))
+            if (
+                user == null
+                || !_passwordService.VerifyPassword(loginDto.Password, user.PasswordHash)
+            )
             {
                 throw new UnauthorizedAccessException("Invalid username or password");
             }
 
             var token = GenerateJwtToken(user);
-            return new AuthResponseDTO
-            {
-                Token = token,
-                Username = user.Username
-            };
+            return new AuthResponseDTO { Token = token, Username = user.Username };
         }
-
 
         public async Task<AuthResponseDTO> RegisterAsync(RegisterDTO registerDto)
         {
@@ -70,30 +72,28 @@ namespace NoteApi.Services
                 PasswordHash = _passwordService.HashPassword(registerDto.Password),
                 PasswordSalt = saltBytes,
                 CreatedAt = DateTime.UtcNow,
-                RefreshToken = Guid.NewGuid().ToString()
+                RefreshToken = Guid.NewGuid().ToString(),
             };
 
             user.Id = await _userRepository.CreateAsync(user);
             var token = GenerateJwtToken(user);
 
-            return new AuthResponseDTO
-            {
-                Token = token,
-                Username = user.Username
-            };
+            return new AuthResponseDTO { Token = token, Username = user.Username };
         }
 
         private string GenerateJwtToken(User user)
         {
-            string jwtKey = _configuration["AppSettings:Secret"] ?? throw new InvalidOperationException("AppSettings Secret is not configured");
+            string jwtKey =
+                _configuration["AppSettings:Secret"]
+                ?? throw new InvalidOperationException("AppSettings Secret is not configured");
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey));
             var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
             var claims = new[]
             {
-            new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-            new Claim(ClaimTypes.Name, user.Username)
-        };
+                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+                new Claim(ClaimTypes.Name, user.Username),
+            };
 
             var token = new JwtSecurityToken(
                 issuer: _configuration["AppSettings:Issuer"],
@@ -106,5 +106,4 @@ namespace NoteApi.Services
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
     }
-
 }
