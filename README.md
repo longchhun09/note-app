@@ -154,7 +154,19 @@ The application will be available at `http://localhost:5173`.
 
 ## Screenshots
 
-*Screenshots will be added soon.*
+Login
+![Login](docs/screenshots/login-note.gif)
+
+Register user
+![Register user](docs/screenshots/register-user.gif)
+
+Create note
+![Create note](docs/screenshots/create-delete-note.gif)
+
+
+Search note
+![Create note](docs/screenshots/search-note.gif)
+
 
 ## API Documentation
 
